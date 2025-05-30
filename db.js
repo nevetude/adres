@@ -3,20 +3,25 @@ require('dotenv').config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  ssl: {
+    rejectUnauthorized: false // Обязательно для Render PostgreSQL
+  }
 });
 
-const runQuery = async (query, params = []) => {
-    const client = await pool.connect();
-    try {
-        const res = await client.query(query, params);
-        return res;
-    } finally {
-        client.release();
-    }
-};
+// Добавьте обработку ошибок подключения
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
+});
 
 module.exports = {
-    pool,
-    runQuery
+  pool,
+  runQuery: async (query, params) => {
+    const client = await pool.connect();
+    try {
+      return await client.query(query, params);
+    } finally {
+      client.release();
+    }
+  }
 };
