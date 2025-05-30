@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('partials/head', { title: product.name }) %>
+    <style>
+        /* Стили для хлебных крошек */
+        .breadcrumb {
+            padding: 0.75rem 1rem;
+            background-color: transparent;
+            border-radius: 0.25rem;
+        }
+
+        .breadcrumb-item a {
+            color: #495057; 
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #212529;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+        [data-theme="dark"] .breadcrumb-item a {
+            color: #e9ecef; 
+        }
+
+        [data-theme="dark"] .breadcrumb-item a:hover {
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] .breadcrumb-item.active {
+            color: #adb5bd;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: #6c757d; 
+        }
+
+        [data-theme="dark"] .breadcrumb-item + .breadcrumb-item::before {
+            color: #adb5bd; 
+        }
+
+        /* Стили для изображения товара */
+        .product-image {
+            width: 100%;
+            height: auto;
+            max-width: 500px;
+            max-height: 500px; 
+            object-fit: contain; 
+            margin: 0 auto; 
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-wrapper">
+        <%- include('partials/navbar') %>
+    </div>
+
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Главная</a></li>
+                <li class="breadcrumb-item"><a href="/category/<%= product.gender %>/<%= product.category %>"><%= product.category %></a></li>
+                <li class="breadcrumb-item active" aria-current="page"><%= product.name %></li>
+            </ol>
+        </nav>
+        <div class="row">
+            <div class="col-md-6">
+                <img src="/images/<%= product.image || 'default.jpg' %>" class="img-fluid rounded product-image" alt="<%= product.name %>">
+            </div>
+            <div class="col-md-6">
+                <h4><%= product.name %></h4>
+                <p class="lead">
+                    <span class="fw-bold"><%= product.price.toFixed(2) %> ₽</span>
+                    <% if (product.old_price) { %>
+                        <span class="old-price ms-2"><%= product.old_price.toFixed(2) %> ₽</span>
+                        <span class="badge bg-danger ms-2">Скидка <%= ((1 - product.price / product.old_price) * 100).toFixed(0) %>%</span>
+                    <% } %>
+                </p>
+                <p><%= product.description %></p>
+                <p><strong>Категория:</strong> <%= product.category %></p>
+                <p><strong>Пол:</strong> <%= product.gender %></p>
+                <p><strong>Доступно:</strong>
+                    <% if (product.quantity > 5) { %>
+                        <span class="text-success">Много (>5)</span>
+                    <% } else if (product.quantity > 0) { %>
+                        <span class="text-warning">Мало (<%= product.quantity %> шт.)</span>
+                    <% } else { %>
+                        <span class="text-danger">Нет в наличии</span>
+                    <% } %>
+                </p>
+
+                <div class="action-container">
+                    <% if (user) { %>
+                        <% const isFavorite = favorites.some(fav => fav.id === product.id); %>
+                        <button
+                            id="favoriteBtn"
+                            class="favorite-btn btn <%= isFavorite ? 'btn-danger' : 'btn-outline-danger' %>"
+                            data-product-id="<%= product.id %>"
+                            data-is-favorite="<%= isFavorite %>"
+                        >
+                            <i class="bi <%= isFavorite ? 'bi-heart-fill' : 'bi-heart' %>"></i>
+                        </button>
+
+                        <div class="size-selector me-2">
+                            <select class="form-select size-select" name="size" id="size-select-<%= product.id %>">
+                                <option value="XS">XS</option>
+                                <option value="S">S</option>
+                                <option value="M" selected>M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                            </select>
+                        </div>
+
+                        <form action="/cart/add" method="POST" class="d-inline">
+                            <input type="hidden" name="id" value="<%= product.id %>">
+                            <input type="hidden" name="quantity" value="1">
+                            <input type="hidden" name="size" id="selected-size-<%= product.id %>" value="M">
+                            <button type="submit" class="add-to-cart-btn btn btn-dark">
+                                <i class="bi bi-cart-plus"></i> В корзину
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <p class="auth-message">Для добавления товаров необходимо войти в систему</p>
+                        <div class="d-flex gap-2 w-100 auth-buttons">
+                            <a href="/auth/register?redirect=/product/<%= product.id %>" class="btn btn-dark auth-btn">
+                                <i class="bi bi-person-plus"></i> Регистрация
+                            </a>
+                            <a href="/auth/login?redirect=/product/<%= product.id %>" class="btn btn btn-dark auth-btn">
+                                <i class="bi bi-box-arrow-in-right"></i> Вход
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработка избранного
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            if (favoriteBtn) {
+                favoriteBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const productId = this.dataset.productId;
+                    const isFavorite = this.querySelector('i').classList.contains('bi-heart-fill');
+
+                    try {
+                        const response = await fetch(`/cart/favorites/${isFavorite ? 'remove' : 'add'}/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            const error = await response.json();
+                            throw new Error(error.error || 'Ошибка сервера');
+                        }
+
+                        const data = await response.json();
+                        if (data.success) {
+                            const icon = this.querySelector('i');
+                            if (isFavorite) {
+                                this.classList.replace('btn-danger', 'btn-outline-danger');
+                                icon.classList.replace('bi-heart-fill', 'bi-heart');
+                            } else {
+                                this.classList.replace('btn-outline-danger', 'btn-danger');
+                                icon.classList.replace('bi-heart', 'bi-heart-fill');
+                            }
+                            updateFavoritesCounter();
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        if (error.message === 'Требуется авторизация') {
+                            window.location.href = `/auth/login?redirect=/product/${productId}`;
+                        }
+                    }
+                });
+            }
+
+            // Функция для обновления счетчика избранного
+            async function updateFavoritesCounter() {
+                try {
+                    const response = await fetch('/cart/favorites/count');
+                    const data = await response.json();
+                    const counter = document.querySelector('#favoritesCounter');
+
+                    if (data.count > 0) {
+                        if (counter) {
+                            counter.textContent = data.count;
+                            counter.style.display = 'inline-block';
+                        } else {
+                            document.querySelector('.nav-link[href="/cart/favorites"]')
+                                .insertAdjacentHTML('beforeend',
+                                    `<span id="favoritesCounter" class="badge bg-danger">${data.count}</span>`);
+                        }
+                    } else if (counter) {
+                        counter.remove();
+                    }
+                } catch (error) {
+                    console.error('Error updating favorites counter:', error);
+                }
+            }
+
+            // Инициализация выбора размера
+            const sizeSelect = document.getElementById('size-select-<%= product.id %>');
+            const sizeHiddenInput = document.getElementById('selected-size-<%= product.id %>');
+            if (sizeSelect && sizeHiddenInput) {
+                sizeSelect.addEventListener('change', function() {
+                    sizeHiddenInput.value = this.value;
+                });
+                sizeHiddenInput.value = sizeSelect.value;
+            }
+        });
+    </script>
+</body>
+</html>

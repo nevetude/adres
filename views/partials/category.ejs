@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('partials/head', { title: `${gender} ${category}` }) %>
+    <style>
+                /* Стили для хлебных крошек */
+        .breadcrumb {
+            padding: 0.75rem 1rem;
+            background-color: transparent;
+            border-radius: 0.25rem;
+        }
+        
+        .breadcrumb-item a {
+            color: #495057; /* Темно-серый цвет для светлой темы */
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .breadcrumb-item a:hover {
+            color: #212529;
+        }
+        
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+        
+        [data-theme="dark"] .breadcrumb-item a {
+            color: #e9ecef; /* Белый цвет для темной темы */
+        }
+        
+        [data-theme="dark"] .breadcrumb-item a:hover {
+            color: #ffffff;
+        }
+        
+        [data-theme="dark"] .breadcrumb-item.active {
+            color: #adb5bd;
+        }
+        
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: #6c757d; /* Цвет разделителя для светлой темы */
+        }
+        
+        [data-theme="dark"] .breadcrumb-item + .breadcrumb-item::before {
+            color: #adb5bd; /* Цвет разделителя для темной темы */
+        }
+    </style>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="navbar-wrapper">
+        <%- include('partials/navbar') %>
+    </div>
+
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Главная</a></li>
+                <li class="breadcrumb-item"><%= gender %></li>
+                <li class="breadcrumb-item active" aria-current="page"><%= category %></li>
+            </ol>
+        </nav>
+
+        <h4 class="mb-4"><%= gender %> <%= category %></h4>
+
+        <div class="row">
+            <% products.forEach(product => { %>
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <% if (product.old_price) { %>
+                            <span class="badge bg-danger position-absolute top-0 end-0 m-2">Скидка <%= ((1 - product.price / product.old_price) * 100).toFixed(0) %>%</span>
+                        <% } %>
+                        <img src="/images/<%= product.image || 'default.jpg' %>" class="card-img-top" alt="<%= product.name %>">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= product.name %></h5>
+                            <p class="card-text"><%= product.description %></p>
+                            <div class="price-section">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="fw-bold"><%= product.price.toFixed(2) %> ₽</span>
+                                        <% if (product.old_price) { %>
+                                            <span class="text-muted text-decoration-line-through ms-2"><%= product.old_price.toFixed(2) %> ₽</span>
+                                        <% } %>
+                                    </div>
+                                    <a href="/product/<%= product.id %>" class="btn btn-sm btn-dark">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

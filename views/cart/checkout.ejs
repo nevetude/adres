@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('../partials/head', { title: 'Оформление заказа' }) %>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .order-summary {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .phone-placeholder {
+            color: black !important;
+        }
+
+        [data-theme="dark"] .phone-placeholder {
+            color: white !important;
+        }
+
+        /* Стили для хлебных крошек */
+        .breadcrumb {
+            padding: 0.75rem 1rem;
+            background-color: transparent;
+            border-radius: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumb-item a {
+            color: #495057;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #212529;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+        [data-theme="dark"] .breadcrumb-item a {
+            color: #e9ecef;
+        }
+
+        [data-theme="dark"] .breadcrumb-item a:hover {
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] .breadcrumb-item.active {
+            color: #adb5bd;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: #6c757d;
+        }
+
+        [data-theme="dark"] .breadcrumb-item + .breadcrumb-item::before {
+            color: #adb5bd;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-wrapper">
+        <%- include('../partials/navbar') %>
+    </div>
+
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Главная</a></li>
+                <li class="breadcrumb-item"><a href="/cart">Корзина</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Оформление заказа</li>
+            </ol>
+        </nav>
+
+        <h1 class="mb-4">Оформление заказа</h1>
+
+        <div class="row">
+            <div class="col-md-7">
+                <form id="checkoutForm">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Контактные данные</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="lastName" class="form-label">Фамилия *</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required
+                                        value="<%= user?.lastName || '' %>" oninput="validateName(this)" style="text-transform: capitalize;">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="firstName" class="form-label">Имя *</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required
+                                        value="<%= user?.firstName || '' %>" oninput="validateName(this)" style="text-transform: capitalize;">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="middleName" class="form-label">Отчество</label>
+                                    <input type="text" class="form-control" id="middleName" name="middleName"
+                                        value="<%= user?.middleName || '' %>" oninput="validateName(this)" style="text-transform: capitalize;">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Телефон *</label>
+                                <input type="tel" class="form-control phone-placeholder" id="phone" name="phone" required
+                                    placeholder="+7 (XXX) XXX-XX-XX" oninput="formatPhoneNumber(this)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Доставка</h5>
+                        </div>
+                        <div class="card-body">
+                                                        <!-- Поля для адреса -->
+                            <div class="mb-3">
+                                <label for="postalCode" class="form-label">Почтовый индекс *</label>
+                                <input type="text" class="form-control" id="postalCode" name="postalCode" required pattern="\d{5,6}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="region" class="form-label">Регион / Область *</label>
+                                <input type="text" class="form-control" id="region" name="region" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="city" class="form-label">Город *</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="street" class="form-label">Улица *</label>
+                                <input type="text" class="form-control" id="street" name="street" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="buildingNumber" class="form-label">Номер дома / корпуса *</label>
+                                <input type="text" class="form-control" id="buildingNumber" name="buildingNumber" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="apartmentNumber" class="form-label">Квартира / офис</label>
+                                <input type="text" class="form-control" id="apartmentNumber" name="apartmentNumber">
+                            </div>
+
+                            <!-- Обновленный textarea для полного адреса (опционально) -->
+                            <!-- Можно оставить или убрать в зависимости от предпочтений -->
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Комментарий</label>
+                                <textarea class="form-control" id="comment" name="comment" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card order-summary">
+                    <div class="card-header">
+                        <h5 class="mb-0">Ваш заказ</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group mb-3">
+                            <% cart.forEach(item => { %>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <div>
+                                        <%= item.name %> (<%= item.size %>)
+                                        <span class="text-muted">× <%= item.quantity %></span>
+                                    </div>
+                                    <span><%= (item.price * item.quantity).toFixed(2) %> ₽</span>
+                                </li>
+                            <% }); %>
+                        </ul>
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Итого:</span>
+                            <span><%= total.toFixed(2) %> ₽</span>
+                        </div>
+                        <button id="submitOrder" class="btn btn-dark w-100 mt-4">Подтвердить заказ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+            // Функция для проверки ФИО на отсутствие цифр и преобразования первой буквы к заглавной
+        function validateName(input) {
+            // Удаляем цифры
+            input.value = input.value.replace(/[0-9]/g, '');
+
+            // Преобразуем первую букву каждого слова в заглавную
+            input.value = input.value.replace(/\b\w/g, char => char.toUpperCase());
+        }
+        // Функция для проверки ФИО на отсутствие цифр
+        function validateName(input) {
+            input.value = input.value.replace(/[0-9]/g, '');
+        }
+
+        // Функция для автоматического форматирования номера телефона
+        function formatPhoneNumber(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (!value.startsWith('7')) {
+                value = '7' + value;
+            }
+            let formattedValue = '+7';
+            if (value.length > 1) {
+                formattedValue += ' (' + value.substring(1, 4);
+            }
+            if (value.length > 4) {
+                formattedValue += ') ' + value.substring(4, 7);
+            }
+            if (value.length > 7) {
+                formattedValue += '-' + value.substring(7, 9);
+            }
+            if (value.length > 9) {
+                formattedValue += '-' + value.substring(9, 11);
+            }
+            input.value = formattedValue;
+        }
+
+        // Автоматическое добавление +7 в поле телефона
+        document.getElementById('phone').addEventListener('focus', function() {
+            if (this.value === '') {
+                this.value = '+7 (';
+            }
+        });
+
+        document.getElementById('submitOrder').addEventListener('click', async () => {
+            const form = document.getElementById('checkoutForm');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/cart/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.fromEntries(formData))
+                });
+                const result = await response.json();
+                if (result.success) {
+                    window.location.href = result.redirectUrl;
+                } else {
+                    alert(result.error || 'Ошибка при оформлении заказа');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка соединения');
+            }
+        });
+    </script>
+</body>
+</html>

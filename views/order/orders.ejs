@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('../partials/head', { title: 'Мои заказы' }) %>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .order-table {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .order-table th {
+            background-color: var(--navbar-color);
+            color: var(--text-light);
+        }
+        
+        .order-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .status-new {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-processing {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        [data-theme="dark"] .status-new {
+            background-color: #002752;
+            color: #90caf9;
+        }
+        
+        [data-theme="dark"] .status-processing {
+            background-color: #332701;
+            color: #ffd54f;
+        }
+        
+        [data-theme="dark"] .status-completed {
+            background-color: #1a3a1e;
+            color: #81c784;
+        }
+        
+        [data-theme="dark"] .status-cancelled {
+            background-color: #3a0d0d;
+            color: #e57373;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-wrapper">
+        <%- include('../partials/navbar') %>
+    </div>
+
+    <div class="container mt-5 pt-4">
+
+        <h4 class="mb-4">Мои заказы</h4>
+        
+        <% if (orders && orders.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table order-table">
+                    <thead>
+                        <tr>
+                            <th>Номер</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                            <th>Сумма</th>
+                            <th>Товары</th>
+                            <th>Подробнее</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(order => { %>
+                            <tr>
+                                <td>#<%= order.id || 'Н/Д' %></td>
+                                <td><%= order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : 'Н/Д' %></td>
+                                <td>
+                                    <span class="order-status 
+                                        <% if (order.status === 'Новый') { %>status-new<% } %>
+                                        <% if (order.status === 'В обработке') { %>status-processing<% } %>
+                                        <% if (order.status === 'Завершен') { %>status-completed<% } %>
+                                        <% if (order.status === 'Отменен') { %>status-cancelled<% } %>">
+                                        <%= order.status || 'Статус неизвестен' %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <%= order.total ? Number(order.total).toFixed(2) + ' ₽' : 'Н/Д' %>
+                                </td>
+                                <td>
+                                    <%= order.productsCount || 0 %> шт.
+                                </td>
+                                <td>
+                                    <a href="/order/<%= order.id %>" class="btn btn-sm btn-dark">
+                                        Подробнее
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info">
+                Ваш список заказов пуст. <a href="/products" class="alert-link">Перейти к товарам</a>
+            </div>
+            <script>
+                setTimeout(function() {
+                    window.location.href = '/products';
+                }, 3000);
+            </script>
+        <% } %>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

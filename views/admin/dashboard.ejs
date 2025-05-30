@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('../../partials/head', { title: 'Админ панель' }) %>
+</head>
+<body>
+    <%- include('../../partials/navbar') %>
+
+    <div class="container mt-4 admin-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Админ панель</h1>
+            <a href="/admin/products/add" class="btn btn-dark">Добавить товар</a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card bg-primary text-white admin-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Товары</h5>
+                        <p class="card-text display-4"><%= products.length %></p>
+                        <a href="/admin/products" class="text-white">Управление товарами</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                <div class="card bg-info text-white admin-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Заказы</h5>
+                        <p class="card-text display-4"><%= ordersCount || 0 %></p>
+                        <a href="/admin/orders" class="text-white">Управление заказами</a>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <h2 class="mb-4">Последние добавленные товары</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Изображение</th>
+                        <th>Название</th>
+                        <th>Цена</th>
+                        <th>Количество</th>
+                        <th>Категория</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% products.slice(0, 5).forEach(product => { %>
+                        <tr>
+                            <td><%= product.id %></td>
+                            <td>
+                                <img src="/images/<%= product.image || 'default.jpg' %>" alt="<%= product.name %>" style="width: 50px;">
+                            </td>
+                            <td><%= product.name %></td>
+                            <td><%= product.price.toFixed(2) %> ₽</td>
+                            <td><%= product.quantity %></td>
+                            <td><%= product.category %></td>
+                            <td class="admin-actions">
+                                <a href="/admin/products/edit/<%= product.id %>" class="btn btn-sm btn-primary">Редактировать</a>
+                                <form action="/admin/products/delete/<%= product.id %>" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <%- include('../../partials/footer') %>
+</body>
+</html>

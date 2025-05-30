@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('partials/head', { title: title || 'Вход' }) %>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .auth-link {
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .auth-link:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+        
+        [data-theme="dark"] .auth-link {
+            color: white !important;
+        }
+        
+        [data-theme="dark"] .auth-link:hover {
+            color: var(--primary-light) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-wrapper">
+        <%- include('partials/navbar') %>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="auth-card card">
+                    <div class="card-header">
+                        <h3 class="mb-0 text-center">Вход</h3>
+                    </div>
+                    <div class="card-body">
+                        <% if (typeof error !== 'undefined' && error) { %>
+                            <div class="alert alert-danger"><%= error %></div>
+                        <% } %>
+
+                        <form action="/auth/login" method="POST">
+                            <input type="hidden" name="redirect" value="<%= typeof redirect !== 'undefined' ? redirect : '' %>">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="<%= typeof email !== 'undefined' ? email : '' %>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Пароль</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100 auth-btn">Войти</button>
+                        </form>
+                        <div class="mt-3 text-center">
+                            <p class="auth-link-text">Нет аккаунта?
+                                <a href="/auth/register<%= typeof redirect !== 'undefined' ? '?redirect=' + redirect : '' %>" class="auth-link">
+                                    Зарегистрируйтесь
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

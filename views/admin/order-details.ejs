@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('../partials/head', { title: title }) %>
+    <style>
+        .order-details-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .order-items-table th {
+            background-color: var(--navbar-color);
+            color: var(--text-light);
+        }
+        .product-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+        .navbar-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-wrapper">
+        <%- include('../partials/navbar') %>
+    </div>
+
+    <div class="container mt-4 admin-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><%= title %></h1>
+            <a href="/admin/orders" class="btn btn-secondary">Назад к заказам</a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="order-details-card">
+                    <h4>Информация о заказе</h4>
+                    <p><strong>Дата:</strong> <%= new Date(order.created_at).toLocaleString('ru-RU') %></p>
+                    <p><strong>Статус:</strong>
+                        <span id="orderStatus" class="badge
+                            <% if (order.status === 'pending') { %>bg-primary<% } %>
+                            <% if (order.status === 'processing') { %>bg-warning text-dark<% } %>
+                            <% if (order.status === 'completed') { %>bg-success<% } %>
+                            <% if (order.status === 'cancelled') { %>bg-danger<% } %>">
+                            <%= {
+                                'pending': 'Ожидает',
+                                'processing': 'В обработке',
+                                'completed': 'Завершен',
+                                'cancelled': 'Отменен'
+                            }[order.status] || order.status %>
+                        </span>
+                    </p>
+                    <p><strong>Сумма:</strong> <%= order.total.toFixed(2) %> ₽</p>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="order-details-card">
+                    <h4>Информация о клиенте</h4>
+                    <p><strong>ФИО:</strong> <%= order.last_name %> <%= order.first_name %> <%= order.middle_name || '' %></p>
+                    <p><strong>Телефон:</strong> <%= order.phone %></p>
+                    <p><strong>Адрес:</strong> <%= order.address %></p>
+                    <% if (order.comment) { %>
+                        <p><strong>Комментарий:</strong> <%= order.comment %></p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-details-card mt-4">
+            <h4>Изменить статус заказа</h4>
+            <form id="statusForm" action="/admin/orders/update-status" method="POST" class="row g-3">
+                <div class="col-md-4">
+                    <label for="status" class="form-label">Статус</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Ожидает</option>
+                        <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>>В обработке</option>
+                        <option value="completed" <%= order.status === 'completed' ? 'selected' : '' %>>Завершен</option>
+                        <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Отменен</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <input type="hidden" name="orderId" value="<%= order.id %>">
+                    <button type="submit" class="btn btn-dark">Обновить статус</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="order-details-card mt-4">
+            <h4>Товары в заказе</h4>
+            <div class="table-responsive">
+                <table class="table order-items-table">
+                    <thead>
+                        <tr>
+                            <th>Товар</th>
+                            <th>Цена</th>
+                            <th>Количество</th>
+                            <th>Размер</th>
+                            <th>Сумма</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% items.forEach(item => { %>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="/images/<%= item.image || 'default.jpg' %>"
+                                             alt="<%= item.product_name %>"
+                                             class="product-image me-3">
+                                        <%= item.product_name %>
+                                    </div>
+                                </td>
+                                <td><%= item.price.toFixed(2) %> ₽</td>
+                                <td><%= item.quantity %></td>
+                                <td><%= item.size %></td>
+                                <td><%= (item.price * item.quantity).toFixed(2) %> ₽</td>
+                            </tr>
+                        <% }); %>
+                        <tr>
+                            <td colspan="4" class="text-end"><strong>Итого:</strong></td>
+                            <td><strong><%= order.total.toFixed(2) %> ₽</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.getElementById('statusForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Предотвращаем стандартное поведение отправки формы
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Обновляем статус на странице
+                    const statusElement = document.getElementById('orderStatus');
+                    const statusText = {
+                        'pending': 'Ожидает',
+                        'processing': 'В обработке',
+                        'completed': 'Завершен',
+                        'cancelled': 'Отменен'
+                    }[formData.get('status')];
+
+                    // Обновляем текст и классы
+                    statusElement.textContent = statusText;
+                    statusElement.className = 'badge ' + getStatusClass(formData.get('status'));
+                } else {
+                    alert('Ошибка при обновлении статуса');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Ошибка сети');
+            });
+        });
+
+        // Функция для получения класса статуса
+        function getStatusClass(status) {
+            const classes = {
+                'pending': 'bg-primary',
+                'processing': 'bg-warning text-dark',
+                'completed': 'bg-success',
+                'cancelled': 'bg-danger'
+            };
+            return classes[status] || '';
+        }
+    </script>
+</body>
+</html>

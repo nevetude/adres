@@ -1,0 +1,473 @@
+:root {
+    color-scheme: light dark;
+    
+    /* Цвета для светлой темы */
+    --bg-color: #ffffff;
+    --text-color: #212529;
+    --card-bg: #f8f9fa;
+    --card-text: #212529;
+    --footer-bg: #343a40;
+    --border-color: #dee2e6;
+    --primary-color: #0d6efd;
+    --danger-color: #dc3545;
+    --navbar-color: #2b2b2b;
+    
+    /* Элементы форм */
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --input-text: #212529;
+    
+    /* Текст */
+    --text-muted: #6c757d;
+    --text-light: #f8f9fa;
+    
+    /* Хлебные крошки */
+    --breadcrumb-divider: #6c757d;
+    --breadcrumb-link: #6c757d;
+    --breadcrumb-active: #495057;
+}
+
+[data-theme="dark"] {
+    /* Цвета для темной темы */
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+    --card-bg: #2d2d2d;
+    --card-text: #ffffff;
+    --footer-bg: #1a1a1a;
+    --border-color: #444;
+    --primary-color: #0d6efd;
+    --danger-color: #dc3545;
+    
+    /* Элементы форм */
+    --input-bg: #2d2d2d;
+    --input-border: #444;
+    --input-text: #ffffff;
+    
+    /* Текст */
+    --text-muted: #adb5bd;
+    --text-light: #ffffff;
+    
+    /* Хлебные крошки */
+    --breadcrumb-divider: #adb5bd;
+    --breadcrumb-link: #adb5bd;
+    --breadcrumb-active: #e9ecef;
+}
+
+/* Базовые стили */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding-top: 56px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+    padding-bottom: 2rem;
+}
+
+footer {
+    flex-shrink: 0;
+    margin-top: auto;
+    background-color: var(--footer-bg) !important;
+}
+
+/* Навигация */
+.navbar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    background-color: var(--navbar-color) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar {
+    background-color: var(--navbar-color) !important;
+    transition: background-color 0.3s ease;
+}
+
+/* Баннер */
+.hero-section {
+    background: linear-gradient(300deg, rgb(68, 68, 68) 0%, rgb(0, 0, 0) 100%);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    color: white;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+}
+
+.hero-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    line-height: 1.1;
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.btn-hero {
+    background-color: #5f5d5d;
+    border: none;
+    padding: 0.6rem 1.8rem;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+/* Карточки */
+.card {
+    background-color: var(--card-bg);
+    color: var(--card-text);
+    border-color: var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title,
+.card-text {
+    color: var(--card-text) !important;
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.price-section {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.badge-discount {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.9rem;
+}
+
+/* Текст */
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.old-price {
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+/* Формы */
+.form-control,
+.form-select,
+.size-select {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--input-border);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+}
+
+/* Таблицы */
+.table {
+    --bs-table-bg: var(--card-bg);
+    --bs-table-color: var(--text-color);
+    --bs-table-border-color: var(--border-color);
+    --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
+    --bs-table-striped-color: var(--text-color);
+    --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
+    --bs-table-hover-color: var(--text-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .table {
+    --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
+    --bs-table-hover-bg: rgba(255, 255, 255, 0.075);
+}
+
+/* Кнопки */
+.btn-outline-dark {
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .btn-outline-dark {
+    color: var(--text-light);
+    border-color: var(--text-light);
+}
+
+.btn-outline-dark:hover {
+    background-color: var(--border-color);
+}
+
+[data-theme="dark"] .btn-outline-dark:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Админ-панель */
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.upload-area:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.image-preview {
+    max-width: 200px;
+    max-height: 200px;
+    display: block;
+    margin: 10px auto;
+}
+
+.action-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+}
+
+.receipt-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+/* Стили для корзины */
+.cart-table {
+    margin-bottom: 2rem;
+}
+
+.cart-item-image {
+    width: 80px;
+    height: auto;
+    object-fit: cover;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-btn {
+    width: 32px;
+    height: 32px;
+    background: var(--quantity-btn-bg, #f8f9fa);
+    border: 1px solid var(--quantity-btn-border, #dee2e6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.quantity-btn:hover {
+    background-color: var(--quantity-btn-hover, #e9ecef);
+}
+
+.quantity-input {
+    width: 50px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid var(--quantity-input-border, #dee2e6);
+    border-left: none;
+    border-right: none;
+    background-color: var(--quantity-input-bg, transparent);
+    color: var(--text-color);
+}
+
+/* Стили для темной темы */
+[data-theme="dark"] {
+    --quantity-btn-bg: #2d2d2d;
+    --quantity-btn-border: #444;
+    --quantity-btn-hover: #3d3d3d;
+    --quantity-input-border: #444;
+    --quantity-input-bg: #2d2d2d;
+}
+
+[data-theme="dark"] .cart-table {
+    --bs-table-bg: #2d2d2d;
+    --bs-table-color: #fff;
+    --bs-table-border-color: #444;
+}
+
+[data-theme="dark"] .img-thumbnail {
+    background-color: #2d2d2d;
+    border-color: #444;
+}
+/* Стили админ-панели */
+.admin-container {
+    padding-top: 20px;
+    padding-bottom: 40px;
+}
+
+.admin-stat-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.admin-stat-card .card-stat {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 10px 0;
+}
+
+.admin-stat-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.admin-stat-link:hover {
+    text-decoration: underline;
+}
+
+.admin-table {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.admin-table th {
+    background-color: var(--navbar-color);
+    color: var(--text-light);
+}
+
+.admin-product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.admin-actions {
+    white-space: nowrap;
+}
+
+.admin-edit-btn,
+.admin-delete-btn {
+    min-width: 36px;
+}
+
+.admin-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background-color: var(--input-bg);
+}
+
+.upload-area-dragover {
+    border-color: var(--primary-color);
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.upload-icon {
+    font-size: 2rem;
+    color: var(--text-muted);
+}
+
+.upload-text {
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+.admin-submit-btn {
+    transition: all 0.3s ease;
+}
+
+.admin-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .admin-container {
+        padding-top: 10px;
+    }
+    
+    .admin-product-image {
+        width: 40px;
+        height: 40px;
+    }
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('partials/head', { title: 'Все товары' }) %>
+    <style>
+        /* Фиксированная навигационная панель */
+        .navbar-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            background-color: #404040 !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Отступ для основного контента */
+        body {
+            padding-top: 56px; /* Высота навигационной панели */
+        }
+
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .product-card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-text {
+            flex: 1;
+        }
+        .price-section {
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+        .badge-discount {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-wrapper">
+        <%- include('partials/navbar') %>
+    </div>
+
+    <!-- Увеличиваем верхний отступ для контейнера -->
+    <div class="container mt-5 pt-4">
+        <h4 class="mb-4">Все товары</h4>
+
+        <div class="row">
+            <% products.forEach(product => { %>
+                <div class="col-md-3 mb-4">
+                    <div class="card product-card h-100" onclick="window.location.href='/product/<%= product.id %>'">
+                        <% if (product.old_price) { %>
+                            <span class="badge bg-danger badge-discount">Скидка <%= ((1 - product.price / product.old_price) * 100).toFixed(0) %>%</span>
+                        <% } %>
+                        <img src="/images/<%= product.image || 'default.jpg' %>" class="card-img-top" alt="<%= product.name %>">
+                        <div class="card-body product-card-body">
+                            <h5 class="card-title"><%= product.name %></h5>
+                            <p class="card-text"><%= product.description %></p>
+                            <div class="price-section">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="fw-bold"><%= product.price.toFixed(2) %> ₽</span>
+                                        <% if (product.old_price) { %>
+                                            <span class="text-muted text-decoration-line-through ms-2"><%= product.old_price.toFixed(2) %> ₽</span>
+                                        <% } %>
+                                    </div>
+                                    <a href="/product/<%= product.id %>" class="btn btn-dark btn-sm details-btn" onclick="event.stopPropagation()">
+                                        Подробнее
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.style.cursor = 'pointer';
+        });
+    </script>
+</body>
+</html>

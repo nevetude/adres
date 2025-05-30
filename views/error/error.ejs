@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('partials/head', { title: 'Ошибка' }) %>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <div class="container mt-5">
+        <div class="alert alert-danger">
+            <h1>Произошла ошибка</h1>
+            <p><%= message %></p>
+            <a href="/" class="btn btn-dark">На главную</a>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

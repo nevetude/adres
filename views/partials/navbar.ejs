@@ -1,0 +1,108 @@
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <img src="/images/adres.jpg" alt="DOOMSHOP Logo" width="50" height="50" class="d-inline-block align-top me-2 rounded">
+            adres44 shop
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <% if (!user || user.role !== 'admin') { %>
+                    <!-- Показываем эти пункты только обычным пользователям и гостям -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="menDropdown" role="button" data-bs-toggle="dropdown">
+                            Мужское
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/men">Все мужское</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/category/Мужское/Футболки">Футболки</a></li>
+                            <li><a class="dropdown-item" href="/category/Мужское/Свитшоты">Свитшоты</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="womenDropdown" role="button" data-bs-toggle="dropdown">
+                            Женское
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/women">Все женское</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/category/Женское/Футболки">Футболки</a></li>
+                            <li><a class="dropdown-item" href="/category/Женское/Свитшоты">Свитшоты</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Все товары</a>
+                    </li>
+                <% } %>
+                <li class="nav-item">
+                    <button id="themeToggle" class="btn btn-link nav-link py-2">
+                        <i class="bi bi-moon-fill"></i> Темная тема
+                    </button>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <% if (user && user.role === 'admin') { %>
+                    <!-- Админские пункты меню -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/products">Товары</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/orders">Заказы</a>
+                    </li>
+                <% } %>
+
+                <% if (user) { %>
+                    <!-- Общие пункты для всех авторизованных -->
+                    <% if (user.role !== 'admin') { %>
+                        <!-- Заказы только для обычных пользователей -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="/orders">
+                                <i class="bi bi-bag"></i> Заказы
+                            </a>
+                        </li>
+                        <!-- Корзина и избранное только для обычных пользователей -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="/cart/favorites">
+                                <i class="bi bi-heart"></i> Избранное
+                                <% if (favorites && favorites.length > 0) { %>
+                                    <span id="favoritesCounter" class="badge bg-danger"><%= favorites.length %></span>
+                                <% } %>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/cart">
+                                <i class="bi bi-cart"></i> Корзина
+                                <% if (cart && cart.length > 0) { %>
+                                    <span class="badge bg-danger"><%= cart.reduce((total, item) => total + item.quantity, 0) %></span>
+                                <% } %>
+                            </a>
+                        </li>
+                    <% } %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <% if (user.role === 'admin') { %>
+                                <i class="bi bi-gear"></i>
+                            <% } else { %>
+                                <i class="bi bi-person"></i>
+                            <% } %>
+                            <%= user.name || user.email %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/auth/logout">Выйти</a></li>
+                        </ul>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/login">Войти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/register">Регистрация</a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>

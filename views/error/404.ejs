@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('partials/head', { title: 'Страница не найдена' }) %>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <div class="container mt-5">
+        <div class="alert alert-danger">
+            <h1>404 - Страница не найдена</h1>
+            <p>Запрошенная страница не существует.</p>
+            <a href="/" class="btn btn-dark">На главную</a>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

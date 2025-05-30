@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <%- include('partials/head', { title: 'Избранное' }) %>
+        <link rel="stylesheet" href="/styles.css">
+    </head>
+<body>
+    <div class="navbar-wrapper">
+        <%- include('partials/navbar') %>
+    </div>
+
+    <div class="container mt-5 pt-4">
+        <h4 class="mb-4">Избранное</h4>
+        
+        <% if (favorites.length === 0) { %>
+            <div class="alert alert-info">
+                Ваш список избранного пуст. <a href="/products" class="alert-link">Перейти к товарам</a>
+            </div>
+        <% } else { %>
+            <div class="row">
+                <% favorites.forEach(product => { %>
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100">
+                            <% if (product.old_price) { %>
+                                <span class="badge bg-danger position-absolute top-0 end-0 m-2">Скидка</span>
+                            <% } %>
+                            <img src="/images/<%= product.image || 'default.jpg' %>" class="card-img-top" alt="<%= product.name %>">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= product.name %></h5>
+                                <p class="card-text"><%= product.description %></p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="fw-bold"><%= product.price.toFixed(2) %> ₽</span>
+                                        <% if (product.old_price) { %>
+                                            <span class="text-muted text-decoration-line-through ms-2"><%= product.old_price.toFixed(2) %> ₽</span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex justify-content-between">
+                                    <a href="/product/<%= product.id %>" class="btn btn-sm btn-dark">Подробнее</a>
+                                    <form action="/cart/favorites/remove/<%= product.id %>" method="POST" class="d-inline remove-favorite-form">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            Удалить
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </div>
+
+    <%- include('partials/footer') %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.remove-favorite-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    fetch(this.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams(new FormData(this))
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            console.error('Ошибка при удалении из избранного');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

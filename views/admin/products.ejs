@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <%- include('../partials/head', { title: 'Админ панель - Товары' }) %>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="navbar-wrapper">
+        <%- include('../partials/navbar') %>
+    </div>
+
+    <div class="container mt-4 admin-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4>Управление товарами</h4>
+            <a href="/admin/products/add" class="btn btn-dark admin-action-btn">
+                <i class="bi bi-plus-lg"></i> Добавить товар
+            </a>
+        </div>
+
+        <% if (products && products.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Изображение</th>
+                            <th>Название</th>
+                            <th>Цена</th>
+                            <th>Количество</th>
+                            <th>Категория</th>
+                            <th>Пол</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% products.forEach(product => { %>
+                            <tr>
+                                <td><%= product.id %></td>
+                                <td>
+                                    <img src="/images/<%= product.image || 'default.jpg' %>" alt="<%= product.name %>" class="admin-product-image">
+                                </td>
+                                <td><%= product.name %></td>
+                                <td>
+                                    <% if (product.price !== null) { %>
+                                        <%= product.price.toFixed(2) %> ₽
+                                    <% } else { %>
+                                        Нет цены
+                                    <% } %>
+                                </td>
+                                <td><%= product.quantity %></td>
+                                <td><%= product.category %></td>
+                                <td><%= product.gender %></td>
+                                <td class="admin-actions">
+                                    <a href="/admin/products/edit/<%= product.id %>" class="btn btn-dark btn-primary admin-edit-btn">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form action="/admin/products/delete/<%= product.id %>" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger admin-delete-btn">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info">
+                Нет товаров для отображения
+            </div>
+        <% } %>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>adres44 shop - <%= typeof title !== 'undefined' ? title : 'Интернет-магазин одежды' %></title>
+<link rel="shortcut icon" href="/images/adres.jpg" type="image/x-icon">
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style">
+<link rel="preload" href="/css/style.css" as="style">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" as="style">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+<script>
+  (function() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.documentElement.style.backgroundColor = savedTheme === 'dark' ? '#121212' : '#ffffff';
+  })();
+</script>
+
+<script src="/js/main.js" defer></script>
+
