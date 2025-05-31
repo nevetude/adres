@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="ru" class="h-100">
 <head>
+    <!-- Подключение шапки страницы -->
     <%- include('partials/head') %>
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body class="d-flex flex-column h-100">
+    <!-- Навигационная панель -->
     <div class="navbar-wrapper">
         <%- include('partials/navbar') %>
     </div>
 
-    <main class="flex-shrink-0">
+    <!-- Основное содержимое страницы -->
+    <main class="flex-shrink-0 main-content">
         <div class="container mt-0">
+            <!-- Секция героя -->
             <div class="hero-section text-center text-md-start">
                 <div class="hero-content mx-auto mx-md-0">
                     <h4 class="hero-title">adres44 shop</h4>
@@ -19,26 +23,32 @@
                 </div>
             </div>
 
+            <!-- Секция с товарами -->
             <h4 class="mb-4">Товары</h4>
             <div class="row">
                 <% products.forEach(product => { %>
                     <div class="col-md-3 mb-4">
                         <div class="card h-100">
+                            <!-- Отображение badge со скидкой, если есть старая цена -->
                             <% if (product.old_price) { %>
                                 <span class="badge bg-danger position-absolute top-0 end-0 m-2">Скидка</span>
                             <% } %>
+                            <!-- Изображение товара -->
                             <img src="/images/<%= product.image || 'default.jpg' %>" class="card-img-top" alt="<%= product.name %>">
                             <div class="card-body">
                                 <h5 class="card-title"><%= product.name %></h5>
                                 <p class="card-text"><%= product.description %></p>
+                                <!-- Секция с ценами -->
                                 <div class="price-section">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <span class="fw-bold"><%= product.price.toFixed(2) %> ₽</span>
+                                            <!-- Отображение старой цены, если она есть -->
                                             <% if (product.old_price) { %>
                                                 <span class="text-muted text-decoration-line-through ms-2"><%= product.old_price.toFixed(2) %> ₽</span>
                                             <% } %>
                                         </div>
+                                        <!-- Кнопка для перехода к деталям товара -->
                                         <a href="/product/<%= product.id %>" class="btn btn-sm btn-dark">Подробнее</a>
                                     </div>
                                 </div>
@@ -50,6 +60,7 @@
         </div>
     </main>
 
+    <!-- Подключение подвала страницы -->
     <%- include('partials/footer') %>
 </body>
 </html>

@@ -461,6 +461,14 @@ footer {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.hero-section {
+    padding-top: 60px; /* Вместо margin-top */
+}
+
+main {
+    margin-top: 20px;
+}
+
 @media (max-width: 768px) {
     .admin-container {
         padding-top: 10px;
