@@ -3,7 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
-const { pool, runQuery } = require('./db');
+const { pool, runQuery } = require('./db'); // Импортируем из db.js
 const pgSession = require('connect-pg-simple')(session);
 const path = require('path');
 const bcrypt = require('bcryptjs');
@@ -86,7 +86,7 @@ const initializeDatabase = async () => {
 
         // Проверяем существование таблиц перед созданием
         const { rows: existingTables } = await runQuery(
-            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"    
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
         );
 
         if (existingTables.length === 0) {
@@ -137,31 +137,27 @@ const initializeDatabase = async () => {
     }
 };
 
-// Настройка сессии с учетом продакшена
-const isProduction = process.env.NODE_ENV === 'production';
-app.set('trust proxy', 1); // Важно для работы за прокси
-
+// Настройка сессии с хранилищем в PostgreSQL
 app.use(session({
     store: new pgSession({
         pool: pool,
         tableName: 'session',
-        createTableIfMissing: true,
-        pruneSessionInterval: 60 * 60 // Очистка старых сессий каждый час
+        createTableIfMissing: true
     }),
     secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: isProduction,
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite: isProduction ? 'none' : 'lax',
-        path: '/',
-        domain: isProduction ? '.yourdomain.com' : undefined // Укажите ваш домен
+        sameSite: 'lax',
+        path: '/'
     },
     name: 'app.sid'
 }));
 
+// Middleware
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
@@ -179,7 +175,7 @@ app.set('views', [
     path.join(__dirname, 'views/partials')
 ]);
 
-// Middleware для сессии
+// Middleware для передачи данных в шаблоны (адаптировано для PostgreSQL)
 app.use(async (req, res, next) => {
     try {
         res.locals.user = req.session.user;
@@ -208,7 +204,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/admin', require('./routes/admin'));
 app.use('/cart', require('./routes/cart'));
 
-// Обработка ошибок
+// Обработка 404
 app.use((req, res) => {
     res.status(404).render('error', { 
         message: 'Страница не найдена',
@@ -216,24 +212,34 @@ app.use((req, res) => {
     });
 });
 
+// Обработка ошибок
 app.use((err, req, res, next) => {
     console.error('Error:', err.stack);
-    res.status(500).render('error', { 
-        message: 'Внутренняя ошибка сервера',
-        status: 500,
-        error: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
+    
+    if (err.message.includes('session')) {
+        req.session.destroy(() => {
+            res.clearCookie('app.sid', { path: '/' });
+            return res.status(500).render('error', { 
+                message: 'Ошибка сессии. Пожалуйста, попробуйте снова.',
+                status: 500
+            });
+        });
+    } else {
+        res.status(500).render('error', { 
+            message: 'Внутренняя ошибка сервера',
+            status: 500,
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        });
+    }
 });
 
-// Запуск сервера
+// Инициализация и запуск сервера
 const startServer = async () => {
     try {
         await initializeDatabase();
         const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-            console.log(`Database URL: ${process.env.DATABASE_URL}`);
-            console.log(`Session secure: ${isProduction}`);
+            console.log(`Server running on http://localhost:${PORT}`);
         });
     } catch (err) {
         console.error('Failed to start server:', err);
@@ -241,6 +247,7 @@ const startServer = async () => {
     }
 };
 
+// Обработка завершения работы для PostgreSQL
 process.on('SIGINT', async () => {
     await pool.end();
     console.log('PostgreSQL connection pool closed');
