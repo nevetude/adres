@@ -21,10 +21,34 @@ if (!fs.existsSync(receiptsDir)) {
 // Инициализация структуры базы данных для PostgreSQL
 const initializeDatabase = async () => {
     try {
-        // Проверяем соединение с БД
         await pool.query('SELECT 1');
         console.log('Successfully connected to PostgreSQL database');
-        // Создание таблиц с синтаксисом PostgreSQL
+
+        // Очистка существующих таблиц (в обратном порядке из-за foreign key constraints)
+        const dropTables = [
+            'DROP TABLE IF EXISTS user_carts CASCADE',
+            'DROP TABLE IF EXISTS order_items CASCADE',
+            'DROP TABLE IF EXISTS orders CASCADE',
+            'DROP TABLE IF EXISTS favorites CASCADE',
+            'DROP TABLE IF EXISTS products CASCADE',
+            'DROP TABLE IF EXISTS users CASCADE',
+            'DROP TABLE IF EXISTS session CASCADE' // Очищаем таблицу сессий
+        ];
+
+        // Проверяем, нужно ли очищать базу (можно сделать по флагу или переменной окружения)
+        const shouldResetDB = process.env.RESET_DB === 'true';
+        
+        if (shouldResetDB) {
+            console.log('Clearing existing database...');
+            for (const dropQuery of dropTables) {
+                try {
+                    await runQuery(dropQuery);
+                } catch (err) {
+                    console.warn(`Error dropping table: ${err.message}`);
+                }
+            }
+            console.log('Database cleared successfully');
+        }
         const tables = [
             `CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
