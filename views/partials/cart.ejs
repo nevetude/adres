@@ -3,21 +3,77 @@
 <head>
     <%- include('partials/head', { title: 'Корзина' }) %>
     <link rel="stylesheet" href="/styles.css">
+    <style>
+        .quantity-control .input-group {
+            flex-wrap: nowrap;
+        }
+        .quantity-control .quantity-display {
+            background-color: white;
+            border-left: none;
+            border-right: none;
+            pointer-events: none;
+            height: 30px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        .quantity-control .quantity-btn {
+            width: 35px;
+            height: 30px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quantity-control .btn-outline-secondary {
+            border-color: #ced4da;
+        }
+        .quantity-control .btn-outline-secondary:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Стили для темной темы */
+        .dark .quantity-display {
+            background-color: #343a40 !important;
+            color: white !important;
+            border-color: #495057 !important;
+        }
+        .dark .quantity-btn {
+            border-color: #495057 !important;
+            color: #adb5bd !important;
+        }
+        .dark .quantity-btn:hover {
+            background-color: #495057 !important;
+            color: white !important;
+        }
+
+        /* Анимация удаления товара */
+        .cart-item-remove {
+            transition: all 0.3s ease;
+            transform: scale(1);
+            opacity: 1;
+        }
+        .cart-item-remove.removing {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar-wrapper">
         <%- include('partials/navbar') %>
     </div>
 
-    <!-- Увеличиваем верхний отступ для контейнера -->
-    <div class="container mt-5 pt-4">
-        <h4 class="mb-4">Корзина</h4>
-
+    <div class="container mt-5 pt-4" id="cart-container">
         <% if (cart.length === 0) { %>
+            <h4 class="mb-4">Корзина</h4>
             <div class="alert alert-info">
                 Ваша корзина пуста. <a href="/products" class="alert-link">Перейти к покупкам</a>
             </div>
         <% } else { %>
+            <h4 class="mb-4">Корзина</h4>
             <div class="table-responsive">
                 <table class="table cart-table">
                     <thead>
@@ -30,9 +86,9 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="cart-items">
                         <% cart.forEach(item => { %>
-                            <tr>
+                            <tr class="cart-item-remove" data-id="<%= item.id %>" data-size="<%= item.size %>">
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <img src="/images/<%= item.image %>" alt="<%= item.name %>" class="img-thumbnail me-3 cart-item-image">
@@ -42,27 +98,34 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td><%= item.price.toFixed(2) %> ₽</td>
+                                <td class="price-cell"><%= Number(item.price).toFixed(2) %> ₽</td>
                                 <td><%= item.size %></td>
                                 <td>
                                     <form action="/cart/update" method="POST" class="quantity-control" id="quantityForm-<%= item.id %>-<%= item.size %>">
                                         <input type="hidden" name="id" value="<%= item.id %>">
                                         <input type="hidden" name="size" value="<%= item.size %>">
-                                        <button type="button" class="quantity-btn minus" data-delta="-1">-</button>
-                                        <input type="number" class="quantity-input" name="quantity" value="<%= item.quantity %>" min="1" max="99">
-                                        <button type="button" class="quantity-btn plus" data-delta="1">+</button>
+                                        <input type="hidden" name="quantity" value="<%= item.quantity %>">
+                                        
+                                        <div class="input-group quantity-group" style="width: 110px;">
+                                            <button type="button" class="quantity-btn minus btn btn-outline-secondary" data-delta="-1">
+                                                <i class="bi bi-dash"></i>
+                                            </button>
+                                            <div class="quantity-display form-control text-center border-secondary bg-white text-dark dark:bg-dark dark:text-white">
+                                                <%= item.quantity %>
+                                            </div>
+                                            <button type="button" class="quantity-btn plus btn btn-outline-secondary" data-delta="1">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                        
                                         <button type="submit" style="display:none">Submit</button>
                                     </form>
                                 </td>
-                                <td><%= (item.price * item.quantity).toFixed(2) %> ₽</td>
+                                <td class="total-cell"><%= (item.price * item.quantity).toFixed(2) %> ₽</td>
                                 <td>
-                                    <form action="/cart/remove" method="POST" class="d-inline">
-                                        <input type="hidden" name="id" value="<%= item.id %>">
-                                        <input type="hidden" name="size" value="<%= item.size %>">
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-danger btn-sm remove-item-btn">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
                         <% }); %>
@@ -70,7 +133,7 @@
                 </table>
             </div>
 
-            <div class="d-flex justify-content-between mt-4">
+            <div class="d-flex justify-content-between mt-4" id="cart-actions">
                 <a href="/products" class="btn btn-dark">Продолжить покупки</a>
                 <a href="/cart/checkout" class="btn btn-dark">Оформить заказ</a>
             </div>
@@ -79,31 +142,131 @@
 
     <%- include('partials/footer') %>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[data-delta]').forEach(button => {
-                button.addEventListener('click', function() {
-                    const delta = parseInt(this.getAttribute('data-delta'));
-                    const form = this.closest('form');
-                    const input = form.querySelector('input[name="quantity"]');
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Функция для обновления строки товара
+        const updateCartItemRow = (form, newQuantity) => {
+            const row = form.closest('tr');
+            const price = parseFloat(row.querySelector('.price-cell').textContent);
+            const totalCell = row.querySelector('.total-cell');
+            const quantityDisplay = form.querySelector('.quantity-display');
+            
+            quantityDisplay.textContent = newQuantity;
+            form.querySelector('input[name="quantity"]').value = newQuantity;
+            totalCell.textContent = (price * newQuantity).toFixed(2) + ' ₽';
+        };
 
-                    let newValue = parseInt(input.value) + delta;
-                    newValue = Math.max(1, Math.min(99, newValue));
-                    input.value = newValue;
+        // Обработчик для кнопок +/-
+        document.querySelectorAll('[data-delta]').forEach(button => {
+            button.addEventListener('click', async function() {
+                const delta = parseInt(this.getAttribute('data-delta'));
+                const form = this.closest('form');
+                const quantityInput = form.querySelector('input[name="quantity"]');
+                
+                let newValue = parseInt(quantityInput.value) + delta;
+                newValue = Math.max(1, Math.min(99, newValue));
 
-                    // Отправляем форму
-                    form.querySelector('[type="submit"]').click();
-                });
-            });
+                // Визуальная обратная связь
+                const display = form.querySelector('.quantity-display');
+                display.style.transform = 'scale(1.1)';
+                setTimeout(() => { display.style.transform = 'scale(1)'; }, 150);
 
-            // Обработчик изменения количества вручную
-            document.querySelectorAll('.quantity-input').forEach(input => {
-                input.addEventListener('change', function() {
-                    const form = this.closest('form');
-                    form.querySelector('[type="submit"]').click();
-                });
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            id: form.querySelector('input[name="id"]').value,
+                            size: form.querySelector('input[name="size"]').value,
+                            quantity: newValue
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        updateCartItemRow(form, newValue);
+                    }
+                } catch (error) {
+                    console.error('Ошибка при обновлении количества:', error);
+                }
             });
         });
-    </script>
+
+        // Обработчик для удаления товара
+        document.querySelectorAll('.remove-item-btn').forEach(button => {
+            button.addEventListener('click', async function() {
+                const row = this.closest('tr');
+                const id = row.getAttribute('data-id');
+                const size = row.getAttribute('data-size');
+                
+                // Анимация удаления
+                row.classList.add('removing');
+                
+                try {
+                    const response = await fetch('/cart/remove', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({ id, size })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        // Ждем завершения анимации перед удалением
+                        setTimeout(() => {
+                            row.remove();
+                            
+                            // Проверяем, пуста ли корзина
+                            if (document.querySelectorAll('#cart-items tr').length === 0) {
+                                const container = document.getElementById('cart-container');
+                                container.innerHTML = `
+                                    <h4 class="mb-4">Корзина</h4>
+                                    <div class="alert alert-info">
+                                        Ваша корзина пуста. <a href="/products" class="alert-link">Перейти к покупкам</a>
+                                    </div>
+                                `;
+                            }
+                        }, 300);
+                    } else {
+                        row.classList.remove('removing');
+                        alert('Не удалось удалить товар: ' + (data.message || 'Ошибка сервера'));
+                    }
+                } catch (error) {
+                    console.error('Ошибка при удалении товара:', error);
+                    row.classList.remove('removing');
+                    alert('Произошла ошибка при удалении товара');
+                }
+            });
+        });
+
+        // Функция для проверки и применения темной темы
+        const applyDarkTheme = () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.querySelectorAll('.quantity-display').forEach(el => {
+                    el.classList.add('bg-dark', 'text-white');
+                    el.classList.remove('bg-white', 'text-dark');
+                });
+            } else {
+                document.querySelectorAll('.quantity-display').forEach(el => {
+                    el.classList.add('bg-white', 'text-dark');
+                    el.classList.remove('bg-dark', 'text-white');
+                });
+            }
+        };
+
+        // Применяем тему при загрузке
+        applyDarkTheme();
+        
+        // Наблюдатель за изменением темы
+        const observer = new MutationObserver(applyDarkTheme);
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    });
+</script>
 </body>
 </html>

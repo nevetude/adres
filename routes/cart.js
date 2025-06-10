@@ -4,17 +4,16 @@ const { pool } = require('../db');
 const pdf = require('html-pdf');
 const path = require('path');
 
-// Получение корзины пользователя
+// Страница корзины
 router.get('/', async (req, res) => {
     const cart = req.session.cart || [];
-    res.render('cart/checkout', {
+    res.render('partials/cart', {  // Указываем правильный путь к шаблону
         title: 'Корзина',
         cart,
         total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
     });
 });
 
-// Добавление товара в корзину
 router.post('/add', async (req, res) => {
     const { id, quantity, size } = req.body;
     try {
@@ -25,13 +24,14 @@ router.post('/add', async (req, res) => {
         const product = rows[0];
         const cart = req.session.cart || [];
         const existing = cart.find(item => item.id === id && item.size === size);
+        
         if (existing) {
             existing.quantity += Number(quantity);
         } else {
             cart.push({
                 id: product.id,
                 name: product.name,
-                price: product.price,
+                price: Number(product.price), // Преобразуем здесь
                 image: product.image,
                 size: size || 'N/A',
                 quantity: Number(quantity)
@@ -93,6 +93,7 @@ router.post('/favorite/remove', async (req, res) => {
     }
 });
 
+/*
 // Избранное: получить список
 router.get('/favorite/list', async (req, res) => {
     if (!req.session.user) {
@@ -108,6 +109,7 @@ router.get('/favorite/list', async (req, res) => {
         res.status(500).json({ success: false, error: 'Ошибка получения избранного' });
     }
 });
+*/
 
 // Избранное: количество
 router.get('/favorite/count', async (req, res) => {

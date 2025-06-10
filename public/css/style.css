@@ -2,7 +2,7 @@
     color-scheme: light dark;
     
     /* Цвета для светлой темы */
-    --bg-color: #ffffff;
+    --bg-color: #fcfcfc;
     --text-color: #212529;
     --card-bg: #f8f9fa;
     --card-text: #212529;
@@ -78,6 +78,7 @@ footer {
     background-color: var(--footer-bg) !important;
 }
 
+
 /* Навигация */
 .navbar-wrapper {
     position: fixed;
@@ -96,7 +97,8 @@ footer {
 
 /* Баннер */
 .hero-section {
-    background: linear-gradient(300deg, rgb(68, 68, 68) 0%, rgb(0, 0, 0) 100%);
+    background: url('/images/banner.jpg') center/cover no-repeat;
+    /* остальные стили без изменений */
     border-radius: 12px;
     overflow: hidden;
     position: relative;
@@ -104,6 +106,9 @@ footer {
     margin: 1.5rem 0;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     color: white;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
 }
 
 .hero-content {

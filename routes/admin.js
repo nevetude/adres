@@ -164,7 +164,7 @@ router.post('/products/delete/:id', isAdmin, async (req, res) => {
 router.get('/orders', isAdmin, async (req, res) => {
     try {
         const { search } = req.query;
-        let query = "SELECT * FROM orders";
+        let query = "SELECT id, created_at, first_name, phone, total::numeric, status FROM orders";
         const params = [];
         if (search) {
             query += " WHERE id = $1";
@@ -172,9 +172,16 @@ router.get('/orders', isAdmin, async (req, res) => {
         }
         query += " ORDER BY created_at DESC";
         const ordersResult = await pool.query(query, params);
+        
+        // Преобразуем total в число
+        const orders = ordersResult.rows.map(order => ({
+            ...order,
+            total: Number(order.total)
+        }));
+        
         res.render('admin/orders', {
             title: 'Управление заказами',
-            orders: ordersResult.rows || [],
+            orders,
             search: search || ''
         });
     } catch (err) {

@@ -41,7 +41,7 @@
                                 </td>
                                 <td><%= product.name %></td>
                                 <td>
-                                    <% if (product.price !== null) { %>
+                                    <% if (typeof product.price === 'number') { %>
                                         <%= product.price.toFixed(2) %> ₽
                                     <% } else { %>
                                         Нет цены

@@ -54,6 +54,47 @@
             margin: 0 auto; 
             display: block;
         }
+
+        /* Стили для кнопки добавления в корзину */
+        .add-to-cart-btn {
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart-btn.added {
+            background-color: #232323 !important;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .action-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .size-selector {
+            min-width: 80px;
+        }
+
+        .auth-message {
+            margin-bottom: 10px;
+        }
+
+        .auth-buttons {
+            margin-top: 15px;
+        }
+
+        .add-to-cart-btn {
+            height: 38px; /* Фиксированная высота */
+            min-width: 100px; /* Минимальная ширина */
+            padding: 0 12px; /* Горизонтальные отступы */
+            font-size: 16px; /* Размер текста */
+            line-height: 1; /* Межстрочный интервал */
+        }
     </style>
 </head>
 <body>
@@ -74,35 +115,41 @@
                 <img src="/images/<%= product.image || 'default.jpg' %>" class="img-fluid rounded product-image" alt="<%= product.name %>">
             </div>
             <div class="col-md-6">
-                <h4><%= product.name %></h4>
-                <p class="lead">
-                    <span class="fw-bold"><%= product.price.toFixed(2) %> ₽</span>
+                <h2 class="mb-3"><%= product.name %></h2>
+                <div class="price-container mb-3">
+                    <span class="fw-bold fs-4"><%= Number(product.price).toFixed(2) %> ₽</span>
                     <% if (product.old_price) { %>
-                        <span class="old-price ms-2"><%= product.old_price.toFixed(2) %> ₽</span>
+                        <span class="text-muted text-decoration-line-through ms-2 fs-5"><%= Number(product.old_price).toFixed(2) %> ₽</span>
                         <span class="badge bg-danger ms-2">Скидка <%= ((1 - product.price / product.old_price) * 100).toFixed(0) %>%</span>
                     <% } %>
-                </p>
-                <p><%= product.description %></p>
-                <p><strong>Категория:</strong> <%= product.category %></p>
-                <p><strong>Пол:</strong> <%= product.gender %></p>
-                <p><strong>Доступно:</strong>
-                    <% if (product.quantity > 5) { %>
-                        <span class="text-success">Много (>5)</span>
-                    <% } else if (product.quantity > 0) { %>
-                        <span class="text-warning">Мало (<%= product.quantity %> шт.)</span>
-                    <% } else { %>
-                        <span class="text-danger">Нет в наличии</span>
-                    <% } %>
-                </p>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="lead"><%= product.description %></p>
+                </div>
 
-                <div class="action-container">
+                <div class="product-details mb-4">
+                    <p><strong>Категория:</strong> <%= product.category %></p>
+                    <p><strong>Пол:</strong> <%= product.gender %></p>
+                    <p><strong>Доступно:</strong>
+                        <% if (product.quantity > 5) { %>
+                            <span class="text-success">Много (>5)</span>
+                        <% } else if (product.quantity > 0) { %>
+                            <span class="text-warning">Мало (<%= product.quantity %> шт.)</span>
+                        <% } else { %>
+                            <span class="text-danger">Нет в наличии</span>
+                        <% } %>
+                    </p>
+                </div>
+
+                <div class="action-container mt-4">
                     <% if (user) { %>
                         <% const isFavorite = favorites.some(fav => fav.id === product.id); %>
                         <button
                             id="favoriteBtn"
-                            class="favorite-btn btn <%= isFavorite ? 'btn-danger' : 'btn-outline-danger' %>"
+                            class="favorite-btn btn <%= isFavorite ? 'btn-danger' : 'btn-outline-danger' %> me-2"
                             data-product-id="<%= product.id %>"
-                            data-is-favorite="<%= isFavorite %>"
+                            title="<%= isFavorite ? 'Удалить из избранного' : 'Добавить в избранное' %>"
                         >
                             <i class="bi <%= isFavorite ? 'bi-heart-fill' : 'bi-heart' %>"></i>
                         </button>
@@ -118,23 +165,24 @@
                             </select>
                         </div>
 
-                        <form action="/cart/add" method="POST" class="d-inline">
-                            <input type="hidden" name="id" value="<%= product.id %>">
-                            <input type="hidden" name="quantity" value="1">
-                            <input type="hidden" name="size" id="selected-size-<%= product.id %>" value="M">
-                            <button type="submit" class="add-to-cart-btn btn btn-dark">
-                                <i class="bi bi-cart-plus"></i> В корзину
-                            </button>
-                        </form>
+                        <button type="button" 
+                                class="add-to-cart-btn btn btn-dark btn-sm" 
+                                data-product-id="<%= product.id %>" 
+                                data-quantity="1"
+                                <%= product.quantity <= 0 ? 'disabled' : '' %>>
+                            <i class="bi bi-cart-plus"></i> В корзину
+                        </button>
                     <% } else { %>
-                        <p class="auth-message">Для добавления товаров необходимо войти в систему</p>
-                        <div class="d-flex gap-2 w-100 auth-buttons">
-                            <a href="/auth/register?redirect=/product/<%= product.id %>" class="btn btn-dark auth-btn">
-                                <i class="bi bi-person-plus"></i> Регистрация
-                            </a>
-                            <a href="/auth/login?redirect=/product/<%= product.id %>" class="btn btn btn-dark auth-btn">
-                                <i class="bi bi-box-arrow-in-right"></i> Вход
-                            </a>
+                        <div class="auth-prompt">
+                            <p class="auth-message">Для добавления товаров необходимо войти в систему</p>
+                            <div class="d-flex gap-2 auth-buttons">
+                                <a href="/auth/register?redirect=/product/<%= product.id %>" class="btn btn-dark">
+                                    <i class="bi bi-person-plus"></i> Регистрация
+                                </a>
+                                <a href="/auth/login?redirect=/product/<%= product.id %>" class="btn btn-dark">
+                                    <i class="bi bi-box-arrow-in-right"></i> Вход
+                                </a>
+                            </div>
                         </div>
                     <% } %>
                 </div>
@@ -153,30 +201,35 @@
                     e.preventDefault();
                     const productId = this.dataset.productId;
                     const isFavorite = this.querySelector('i').classList.contains('bi-heart-fill');
+                    const icon = this.querySelector('i');
 
+                    // Визуальная обратная связь
+                    this.disabled = true;
+                    
                     try {
-                        const response = await fetch(`/cart/favorites/${isFavorite ? 'remove' : 'add'}/${productId}`, {
+                        const response = await fetch(`/cart/favorite/${isFavorite ? 'remove' : 'add'}`, {
                             method: 'POST',
                             headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            }
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ productId })
                         });
 
+                        const data = await response.json();
+                        
                         if (!response.ok) {
-                            const error = await response.json();
-                            throw new Error(error.error || 'Ошибка сервера');
+                            throw new Error(data.error || 'Ошибка сервера');
                         }
 
-                        const data = await response.json();
                         if (data.success) {
-                            const icon = this.querySelector('i');
                             if (isFavorite) {
                                 this.classList.replace('btn-danger', 'btn-outline-danger');
                                 icon.classList.replace('bi-heart-fill', 'bi-heart');
+                                this.title = 'Добавить в избранное';
                             } else {
                                 this.classList.replace('btn-outline-danger', 'btn-danger');
                                 icon.classList.replace('bi-heart', 'bi-heart-fill');
+                                this.title = 'Удалить из избранного';
                             }
                             updateFavoritesCounter();
                         }
@@ -184,26 +237,113 @@
                         console.error('Error:', error);
                         if (error.message === 'Требуется авторизация') {
                             window.location.href = `/auth/login?redirect=/product/${productId}`;
+                        } else {
+                            alert('Ошибка: ' + error.message);
+                        }
+                    } finally {
+                        this.disabled = false;
+                    }
+                });
+            }
+
+            // Обработка добавления в корзину
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const productId = this.dataset.productId;
+                    const quantity = this.dataset.quantity;
+                    const size = document.getElementById('size-select-' + productId)?.value || 'M';
+                    const originalText = this.innerHTML;
+                    
+                    // Визуальная обратная связь
+                    this.disabled = true;
+                    this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Добавляем...';
+                    
+                    try {
+                        const response = await fetch('/cart/add', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                id: productId,
+                                quantity: quantity,
+                                size: size
+                            })
+                        });
+
+                        const data = await response.json();
+                        
+                        if (!response.ok) {
+                            throw new Error(data.error || 'Ошибка сервера');
+                        }
+
+                        if (data.success) {
+                            // Успешное добавление - анимация
+                            this.innerHTML = '<i class="bi bi-check-circle"></i> Добавлено';
+                            this.classList.add('added');
+                            
+                            // Обновляем счетчик в навигации
+                            updateCartCounter(data.cart);
+                            
+                            // Возвращаем исходное состояние через 2 секунды
+                            setTimeout(() => {
+                                this.innerHTML = originalText;
+                                this.classList.remove('added');
+                                this.disabled = false;
+                            }, 2000);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                        
+                        if (error.message === 'Требуется авторизация') {
+                            window.location.href = `/auth/login?redirect=/product/${productId}`;
+                        } else {
+                            alert('Ошибка при добавлении в корзину: ' + error.message);
                         }
                     }
                 });
+            });
+
+            // Функция для обновления счетчика корзины
+            function updateCartCounter(cart) {
+                const cartLink = document.querySelector('.nav-link[href="/cart"]');
+                if (!cartLink) return;
+                
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                let counter = cartLink.querySelector('.badge');
+                
+                if (totalItems > 0) {
+                    if (counter) {
+                        counter.textContent = totalItems;
+                    } else {
+                        cartLink.insertAdjacentHTML('beforeend', 
+                            `<span class="badge bg-danger ms-1">${totalItems}</span>`);
+                    }
+                } else if (counter) {
+                    counter.remove();
+                }
             }
 
             // Функция для обновления счетчика избранного
             async function updateFavoritesCounter() {
                 try {
-                    const response = await fetch('/cart/favorites/count');
+                    const response = await fetch('/cart/favorite/count');
+                    if (!response.ok) return;
+                    
                     const data = await response.json();
-                    const counter = document.querySelector('#favoritesCounter');
-
+                    const favoritesLink = document.querySelector('.nav-link[href="/cart/favorite/list"]');
+                    if (!favoritesLink) return;
+                    
+                    let counter = favoritesLink.querySelector('.badge');
+                    
                     if (data.count > 0) {
                         if (counter) {
                             counter.textContent = data.count;
-                            counter.style.display = 'inline-block';
                         } else {
-                            document.querySelector('.nav-link[href="/cart/favorites"]')
-                                .insertAdjacentHTML('beforeend',
-                                    `<span id="favoritesCounter" class="badge bg-danger">${data.count}</span>`);
+                            favoritesLink.insertAdjacentHTML('beforeend', 
+                                `<span class="badge bg-danger ms-1">${data.count}</span>`);
                         }
                     } else if (counter) {
                         counter.remove();
@@ -211,16 +351,6 @@
                 } catch (error) {
                     console.error('Error updating favorites counter:', error);
                 }
-            }
-
-            // Инициализация выбора размера
-            const sizeSelect = document.getElementById('size-select-<%= product.id %>');
-            const sizeHiddenInput = document.getElementById('selected-size-<%= product.id %>');
-            if (sizeSelect && sizeHiddenInput) {
-                sizeSelect.addEventListener('change', function() {
-                    sizeHiddenInput.value = this.value;
-                });
-                sizeHiddenInput.value = sizeSelect.value;
             }
         });
     </script>

@@ -9,7 +9,6 @@ const transformProduct = (product) => ({
     old_price: product.old_price ? Number(product.old_price) : null
 });
 
-// Страница избранного
 router.get('/favorites', async (req, res) => {
     if (!req.session.user) {
         return res.redirect('/auth/login?redirect=/favorites');
@@ -25,7 +24,11 @@ router.get('/favorites', async (req, res) => {
         
         res.render('product/favorites', {
             title: 'Избранное',
-            products: rows.map(transformProduct)
+            favorites: rows.map(p => ({
+                ...p,
+                price: Number(p.price),
+                old_price: p.old_price ? Number(p.old_price) : null
+            }))
         });
     } catch (err) {
         console.error('Ошибка загрузки избранного:', err);

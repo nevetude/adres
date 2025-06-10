@@ -1,50 +1,79 @@
 <!DOCTYPE html>
 <html lang="ru">
-    <head>
-        <%- include('partials/head', { title: 'Избранное' }) %>
-        <link rel="stylesheet" href="/styles.css">
-    </head>
+<head>
+    <%- include('../partials/head', { title: 'Избранное' }) %>
+    <style>
+        .favorites-container {
+            min-height: 70vh;
+            padding-top: 2rem;
+        }
+        .product-card {
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        [data-theme="dark"] .product-card {
+            background-color: #2d2d2d;
+            border-color: #444;
+        }
+    </style>
+</head>
 <body>
     <div class="navbar-wrapper">
-        <%- include('partials/navbar') %>
+        <%- include('../partials/navbar') %>
     </div>
 
     <div class="container mt-5 pt-4">
         <h4 class="mb-4">Избранное</h4>
         
-        <% if (favorites.length === 0) { %>
+        <% if (!favorites || favorites.length === 0) { %>
             <div class="alert alert-info">
                 Ваш список избранного пуст. <a href="/products" class="alert-link">Перейти к товарам</a>
             </div>
         <% } else { %>
-            <div class="row">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
                 <% favorites.forEach(product => { %>
-                    <div class="col-md-3 mb-4">
-                        <div class="card h-100">
+                    <div class="col">
+                        <div class="card product-card h-100">
                             <% if (product.old_price) { %>
-                                <span class="badge bg-danger position-absolute top-0 end-0 m-2">Скидка</span>
+                                <span class="badge bg-danger discount-badge">Скидка</span>
                             <% } %>
-                            <img src="/images/<%= product.image || 'default.jpg' %>" class="card-img-top" alt="<%= product.name %>">
-                            <div class="card-body">
+                            <img src="/images/<%= product.image || 'default.jpg' %>" 
+                                 class="card-img-top" 
+                                 alt="<%= product.name %>"
+                                 onerror="this.src='/images/default.jpg'">
+                            <div class="card-body d-flex flex-column">
                                 <h5 class="card-title"><%= product.name %></h5>
-                                <p class="card-text"><%= product.description %></p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="fw-bold"><%= product.price.toFixed(2) %> ₽</span>
-                                        <% if (product.old_price) { %>
-                                            <span class="text-muted text-decoration-line-through ms-2"><%= product.old_price.toFixed(2) %> ₽</span>
-                                        <% } %>
+                                <p class="card-text flex-grow-1"><%= product.description.slice(0, 100) %><%= product.description.length > 100 ? '...' : '' %></p>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <span class="fw-bold fs-5"><%= Number(product.price).toFixed(2) %> ₽</span>
+                                            <% if (product.old_price) { %>
+                                                <span class="text-muted text-decoration-line-through ms-2"><%= Number(product.old_price).toFixed(2) %> ₽</span>
+                                            <% } %>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <div class="d-flex justify-content-between">
-                                    <a href="/product/<%= product.id %>" class="btn btn-sm btn-dark">Подробнее</a>
-                                    <form action="/cart/favorites/remove/<%= product.id %>" method="POST" class="d-inline remove-favorite-form">
-                                        <button type="submit" class="btn btn-sm btn-danger">
+                                    <div class="d-flex justify-content-between">
+                                        <a href="/product/<%= product.id %>" class="btn btn-sm btn-dark">Подробнее</a>
+                                        <button class="btn btn-sm btn-danger remove-favorite" 
+                                                data-product-id="<%= product.id %>">
                                             Удалить
                                         </button>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -54,29 +83,42 @@
         <% } %>
     </div>
 
-    <%- include('partials/footer') %>
+    <%- include('../partials/footer') %>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.remove-favorite-form').forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
+            // Обработка удаления из избранного
+            document.querySelectorAll('.remove-favorite').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
                     
-                    fetch(this.action, {
+                    fetch('/cart/favorite/remove', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Content-Type': 'application/json',
                         },
-                        body: new URLSearchParams(new FormData(this))
+                        body: JSON.stringify({ productId: productId })
                     })
                     .then(response => {
                         if (response.ok) {
-                            window.location.reload();
+                            // Анимация удаления
+                            this.closest('.col').style.opacity = '0';
+                            setTimeout(() => {
+                                this.closest('.col').remove();
+                                // Обновляем счетчик избранного в навигации
+                                const favoriteCount = document.querySelector('.favorite-count');
+                                if (favoriteCount) {
+                                    const newCount = parseInt(favoriteCount.textContent) - 1;
+                                    favoriteCount.textContent = newCount > 0 ? newCount : '';
+                                }
+                            }, 300);
                         } else {
-                            console.error('Ошибка при удалении из избранного');
+                            alert('Ошибка при удалении из избранного');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
+                        alert('Произошла ошибка');
                     });
                 });
             });

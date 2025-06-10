@@ -3,6 +3,23 @@
 <head>
     <%- include('../partials/head', { title: 'Управление заказами' }) %>
     <style>
+                /* Новые стили для поля поиска */
+        .search-form .form-control {
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .search-form .form-control::placeholder {
+            color: #ffffff !important;
+            opacity: 0.8;
+        }
+
+        /* Дополнительно можно стилизовать само поле ввода в темной теме */
+        [data-theme="dark"] .search-form .form-control {
+            background-color: #2d2d2d;
+            border-color: #444;
+        }
         .order-status {
             padding: 0.25rem 0.5rem;
             border-radius: 4px;

@@ -3,12 +3,12 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
+const { pool, runQuery } = require('./db');
+const pgSession = require('connect-pg-simple')(session);
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const fs = require('fs');
-const pgSession = require('connect-pg-simple')(session);
-const { pool, runQuery } = require('./db'); // Импортируем и pool, и runQuery
 const app = express();
 
 // Настройка загрузки файлов
@@ -18,7 +18,7 @@ if (!fs.existsSync(receiptsDir)) {
     fs.mkdirSync(receiptsDir, { recursive: true });
 }
 
-// Инициализация структуры базы данных (остается такой же как в оригинале)
+// Инициализация структуры базы данных для PostgreSQL
 const initializeDatabase = async () => {
     try {
         // Проверяем соединение с БД
@@ -84,9 +84,9 @@ const initializeDatabase = async () => {
             )`
         ];
 
-        // Проверяем существование таблиц
+        // Проверяем существование таблиц перед созданием
         const { rows: existingTables } = await runQuery(
-            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"    
         );
 
         if (existingTables.length === 0) {
@@ -96,27 +96,12 @@ const initializeDatabase = async () => {
 
             // Добавление тестовых данных
             const initialProducts = [
-                // Мужская коллекция (из папки man)
-                ['Футболка Mono Vibe', 'Мужская футболка Mono Vibe', 1999, 2499, 'Футболки', 'Мужское', 'man/Футболка Mono Vibe.jpg', 10],
-                ['Худи Collapse', 'Мужское худи Collapse', 3999, 4499, 'Худи', 'Мужское', 'man/Худи Collapse.jpg', 8],
-                ['Рубашка Clean Frame', 'Мужская рубашка Clean Frame', 2999, 3499, 'Рубашки', 'Мужское', 'man/Рубашка Clean Frame.jpg', 7],
-                ['Пиджак Bronze Signal', 'Мужской пиджак Bronze Signal', 5999, 6499, 'Пиджаки', 'Мужское', 'man/Пиджак Bronze Signal.jpg', 5],
-                ['Пальто Grey Author', 'Мужское пальто Grey Author', 7999, 8499, 'Пальто', 'Мужское', 'man/Пальто Grey Author.jpg', 4],
-                ['Джинсы Static Wash', 'Мужские джинсы Static Washing', 4999, 5499, 'Джинсы', 'Мужское', 'man/Джинсы Static Wash.jpg', 6],
-                ['Брюки Line Step', 'Мужские брюки Line Step', 3499, 3999, 'Брюки', 'Мужское', 'man/Брюки Line Step.jpg', 5],
-                
-                // Женская коллекция (из папки woman)
-                ['Футболка White Static', 'Женская футболка White Static', 1999, 2499, 'Футболки', 'Женское', 'woman/Футболка White Static.jpg', 12],
-                ['Худи Noise Layer', 'Женское худи Noise Layer', 3999, 4499, 'Худи', 'Женское', 'woman/Худи Noise Layer.jpg', 9],
-                ['Рубашка Void Collar', 'Женская рубашка Void Collar', 2999, 3499, 'Рубашки', 'Женское', 'woman/Рубашка Void Collar.jpg', 6],
-                ['Куртка Smoke Signal', 'Женская куртка Smoke Signal', 5999, 6499, 'Куртки', 'Женское', 'woman/Куртка Smoke Signal.jpg', 4],
-                ['Пальто Night Frame', 'Женское пальто Night Frame', 7999, 8499, 'Пальто', 'Женское', 'woman/Пальто Night Frame.jpg', 3],
-                ['Джинсы Dustlight', 'Женские джинсы Dustlight', 4999, 5499, 'Джинсы', 'Женское', 'woman/Джинсы Dustlight.jpg', 7],
-                ['Брюки Sharp Echo', 'Женские брюки Sharp Echo', 3499, 3999, 'Брюки', 'Женское', 'woman/Брюки Sharp Echo.jpg', 5],
-                
-                // Базовые товары (из корня)
-                //['Black Basic', 'Базовая черная футболка', 1499, null, 'Футболки', 'Унисекс', 'black.jpg', 20],
-                //['White Basic', 'Базовая белая футболка', 1499, null, 'Футболки', 'Унисекс', 'white.jpg', 15]
+                ['CRYSQUAD T-shirt', 'Черная футболка с логотипом CRYSQUAD', 1999, 2499, 'Футболки', 'Мужское', 'tshirt1.jpg', 10],
+                ['WHITENER Casper', 'Черная футболка с принтом Casper', 1999, 2499, 'Футболки', 'Женское', 'tshirt_whitener.jpg', 15],
+                ['AQUAKEY SWORD', 'Черная футболка с принтом', 3999, 4499, 'Свитшоты', 'Мужское', 'tshirt_aquakey.jpg', 8],
+                ['Haru Matsui', 'Черная футболка с принтом', 3999, 4499, 'Свитшоты', 'Женское', 'tshirt_hm.jpg', 5],
+                ['Black Basic', 'Базовая черная футболка', 1499, null, 'Футболки', 'Мужское', 'black.jpg', 20],
+                ['White Basic', 'Базовая белая футболка', 1499, null, 'Футболки', 'Женское', 'white.jpg', 15]
             ];
 
             for (const product of initialProducts) {
@@ -152,27 +137,31 @@ const initializeDatabase = async () => {
     }
 };
 
-// Настройка сессии
+// Настройка сессии с учетом продакшена
+const isProduction = process.env.NODE_ENV === 'production';
+app.set('trust proxy', 1); // Важно для работы за прокси
+
 app.use(session({
     store: new pgSession({
         pool: pool,
         tableName: 'session',
-        createTableIfMissing: true
+        createTableIfMissing: true,
+        pruneSessionInterval: 60 * 60 // Очистка старых сессий каждый час
     }),
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    secret: process.env.SESSION_SECRET || 'adres_secret',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: false, // Для локального использования отключаем secure
+        secure: isProduction,
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite: 'lax',
-        path: '/'
+        sameSite: isProduction ? 'none' : 'lax',
+        path: '/',
+        domain: isProduction ? 'adres-i9tk.onrender.com' : undefined // Ваш домен Render.com
     },
     name: 'app.sid'
 }));
 
-// Middleware
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
@@ -190,7 +179,7 @@ app.set('views', [
     path.join(__dirname, 'views/partials')
 ]);
 
-// Middleware для передачи данных в шаблоны
+// Middleware для сессии
 app.use(async (req, res, next) => {
     try {
         res.locals.user = req.session.user;
@@ -213,16 +202,13 @@ app.use(async (req, res, next) => {
     }
 });
 
-app.locals.formatPrice = (price) => {
-    return Number(price).toFixed(2);
-};
 // Подключение маршрутов
 app.use('/', require('./routes/api'));
 app.use('/auth', require('./routes/auth'));
 app.use('/admin', require('./routes/admin'));
 app.use('/cart', require('./routes/cart'));
 
-// Обработка 404 и ошибок (остается такой же как в оригинале)
+// Обработка ошибок
 app.use((req, res) => {
     res.status(404).render('error', { 
         message: 'Страница не найдена',
@@ -232,32 +218,22 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
     console.error('Error:', err.stack);
-    
-    if (err.message.includes('session')) {
-        req.session.destroy(() => {
-            res.clearCookie('app.sid', { path: '/' });
-            return res.status(500).render('error', { 
-                message: 'Ошибка сессии. Пожалуйста, попробуйте снова.',
-                status: 500
-            });
-        });
-    } else {
-        res.status(500).render('error', { 
-            message: 'Внутренняя ошибка сервера',
-            status: 500,
-            error: process.env.NODE_ENV === 'development' ? err.message : undefined
-        });
-    }
+    res.status(500).render('error', { 
+        message: 'Внутренняя ошибка сервера',
+        status: 500,
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
 });
 
-// Инициализация и запуск сервера
+// Запуск сервера
 const startServer = async () => {
     try {
         await initializeDatabase();
         const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => {
-            console.log(`Server running on http://localhost:${PORT}`);
-            console.log(`Admin credentials: admin@adres.com / admin`);
+            console.log(`Server running on port ${PORT}`);
+            console.log(`Database URL: ${process.env.DATABASE_URL}`);
+            console.log(`Session secure: ${isProduction}`);
         });
     } catch (err) {
         console.error('Failed to start server:', err);
@@ -265,12 +241,11 @@ const startServer = async () => {
     }
 };
 
-// Обработка завершения работы
 process.on('SIGINT', async () => {
     await pool.end();
     console.log('PostgreSQL connection pool closed');
     process.exit(0);
 });
 
-module.exports = { app, pool, runQuery };
+module.exports = { app };
 startServer();
