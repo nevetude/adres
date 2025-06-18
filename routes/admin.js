@@ -201,10 +201,23 @@ router.route('/products/edit/:id')
 
 // Удаление товара
 router.post('/products/delete/:id', isAdmin, async (req, res) => {
+    const client = await pool.connect();
     try {
-        await pool.query("DELETE FROM products WHERE id = $1", [req.params.id]);
+        await client.query('BEGIN');
+        
+        // First delete related order items
+        await client.query("DELETE FROM order_items WHERE product_id = $1", [req.params.id]);
+        
+        // Then delete the product
+        await client.query("DELETE FROM products WHERE id = $1", [req.params.id]);
+        
+        await client.query('COMMIT');
     } catch (err) {
+        await client.query('ROLLBACK');
         console.error('Ошибка при удалении товара:', err);
+        return res.status(500).json({ error: 'Ошибка при удалении товара' });
+    } finally {
+        client.release();
     }
     res.redirect('/admin/products');
 });

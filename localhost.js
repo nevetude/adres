@@ -96,15 +96,6 @@ const initializeDatabase = async () => {
 
             // Добавление тестовых данных
             const initialProducts = [
-                // Мужская коллекция 
-                ['Футболка Mono Vibe', 'Мужская футболка Mono Vibe', 1999, 2499, 'Футболки', 'Мужское', 'man/Футболка Mono Vibe.jpg', 10],
-                ['Худи Collapse', 'Мужское худи Collapse', 3999, 4499, 'Худи', 'Мужское', 'man/Худи Collapse.jpg', 8],
-                ['Рубашка Clean Frame', 'Мужская рубашка Clean Frame', 2999, 3499, 'Рубашки', 'Мужское', 'man/Рубашка Clean Frame.jpg', 7],
-                ['Пиджак Bronze Signal', 'Мужской пиджак Bronze Signal', 5999, 6499, 'Пиджаки', 'Мужское', 'man/Пиджак Bronze Signal.jpg', 5],
-                ['Пальто Grey Author', 'Мужское пальто Grey Author', 7999, 8499, 'Пальто', 'Мужское', 'man/Пальто Grey Author.jpg', 4],
-                ['Джинсы Static Wash', 'Мужские джинсы Static Washing', 4999, 5499, 'Джинсы', 'Мужское', 'man/Джинсы Static Wash.jpg', 6],
-                ['Брюки Line Step', 'Мужские брюки Line Step', 3499, 3999, 'Брюки', 'Мужское', 'man/Брюки Line Step.jpg', 5],
-                
                 // Женская коллекция
                 ['Футболка White Static', 'Женская футболка White Static', 1999, 2499, 'Футболки', 'Женское', 'woman/Футболка White Static.jpg', 12],
                 ['Худи Noise Layer', 'Женское худи Noise Layer', 3999, 4499, 'Худи', 'Женское', 'woman/Худи Noise Layer.jpg', 9],
@@ -113,6 +104,14 @@ const initializeDatabase = async () => {
                 ['Пальто Night Frame', 'Женское пальто Night Frame', 7999, 8499, 'Пальто', 'Женское', 'woman/Пальто Night Frame.jpg', 3],
                 ['Джинсы Dustlight', 'Женские джинсы Dustlight', 4999, 5499, 'Джинсы', 'Женское', 'woman/Джинсы Dustlight.jpg', 7],
                 ['Брюки Sharp Echo', 'Женские брюки Sharp Echo', 3499, 3999, 'Брюки', 'Женское', 'woman/Брюки Sharp Echo.jpg', 5],
+                // Мужская коллекция 
+                ['Футболка Mono Vibe', 'Мужская футболка Mono Vibe', 1999, 2499, 'Футболки', 'Мужское', 'man/Футболка Mono Vibe.jpg', 10],
+                ['Худи Collapse', 'Мужское худи Collapse', 3999, 4499, 'Худи', 'Мужское', 'man/Худи Collapse.jpg', 8],
+                ['Рубашка Clean Frame', 'Мужская рубашка Clean Frame', 2999, 3499, 'Рубашки', 'Мужское', 'man/Рубашка Clean Frame.jpg', 7],
+                ['Пиджак Bronze Signal', 'Мужской пиджак Bronze Signal', 5999, 6499, 'Пиджаки', 'Мужское', 'man/Пиджак Bronze Signal.jpg', 5],
+                ['Пальто Grey Author', 'Мужское пальто Grey Author', 7999, 8499, 'Пальто', 'Мужское', 'man/Пальто Grey Author.jpg', 4],
+                ['Джинсы Static Wash', 'Мужские джинсы Static Washing', 4999, 5499, 'Джинсы', 'Мужское', 'man/Джинсы Static Wash.jpg', 6],
+                ['Брюки Line Step', 'Мужские брюки Line Step', 3499, 3999, 'Брюки', 'Мужское', 'man/Брюки Line Step.jpg', 5],
                 
                 // Базовые товары (из корня)
                 //['Black Basic', 'Базовая черная футболка', 1499, null, 'Футболки', 'Унисекс', 'black.jpg', 20],

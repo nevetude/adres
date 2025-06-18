@@ -167,7 +167,9 @@
                         <div class="card-body">
                             <div class="mb-2">
                                 <label for="postalCode" class="form-label">Почтовый индекс *</label>
-                                <input type="text" class="form-control" id="postalCode" name="postalCode" required pattern="\d{5,6}">
+                                <input type="text" class="form-control" id="postalCode" name="postalCode" required 
+                                    pattern="\d{5,6}" oninput="this.value = this.value.replace(/\D/g, '')"
+                                    maxlength="6">
                             </div>
                             <div class="mb-2">
                                 <label for="region" class="form-label">Регион / Область *</label>
@@ -188,7 +190,8 @@
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <label for="apartmentNumber" class="form-label">Квартира / офис</label>
-                                    <input type="text" class="form-control" id="apartmentNumber" name="apartmentNumber">
+                                    <input type="text" class="form-control" id="apartmentNumber" name="apartmentNumber"
+                                        oninput="this.value = this.value.replace(/\D/g, '')">
                                 </div>
                             </div>
                             <div class="mb-2">
@@ -290,6 +293,13 @@
                     input.classList.remove('is-invalid');
                 }
             });
+            
+            // Дополнительная проверка почтового индекса
+            const postalCodeInput = document.getElementById('postalCode');
+            if (postalCodeInput.value.length < 5) {
+                postalCodeInput.classList.add('is-invalid');
+                isValid = false;
+            }
             
             if (!isValid) {
                 alert('Пожалуйста, заполните все обязательные поля');

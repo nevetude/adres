@@ -31,7 +31,10 @@
     --dropdown-text-light: #212529;
     --dropdown-hover-bg-light: #f8f9fa;
     --dropdown-hover-text-light: #303030;
-    --dropdown-text-hover-light: #161616;
+    --dropdown-text-light: #212529;          /* Стандартный цвет текста */
+    --dropdown-text-hover-light: #161616;    /* Темный цвет при наведении */
+
+
 }
 
 [data-theme="dark"] {
@@ -61,9 +64,7 @@
     --text-muted: #adb5bd;
 }
 
-/* ======================
-   Базовые стили и сброс
-   ====================== */
+/* Базовые стили */
 * {
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
@@ -84,50 +85,85 @@ body {
 
 main {
     flex: 1 0 auto;
-    margin: 10rem 0 0 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 10rem;
     width: 100%;
-    min-height: calc(100vh - 280px);
+    min-height: calc(100vh - 280px); /* Высота viewport минус высота header/footer */
+
 }
 
 footer {
     background-color: var(--footer-bg) !important;
-    margin-top: auto;
+    margin-top: auto; /* Это заставит футер прижиматься к низу */
     min-height: 200px;
-    position: relative;
+    position: relative; /* Изменяем с absolute на relative */
     width: 100%;
 }
-
-/* ======================
-   Навигация
-   ====================== */
-.navbar-wrapper {
-    background-color: var(--navbar-color) !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    left: 0;
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: 1030;
+/* В файле style.css добавьте */
+.admin-mode .navbar-island-left,
+.admin-mode .navbar-island-center {
+    display: none !important;
+}
+/* Затем добавьте эти стили: */
+[data-theme="light"] .dropdown-item {
+    color: var(--dropdown-text-light) !important;  /* Строка, задающая цвет текста */
+    transition: color 0.2s ease;
 }
 
-.navbar {
-    background-color: var(--navbar-color) !important;
-    transition: background-color 0.3s ease;
+[data-theme="light"] .dropdown-item:hover {
+    color: var(--dropdown-text-hover-light) !important;  /* Строка, делающая текст темнее при наведении */
+    background-color: var(--dropdown-hover-bg-light) !important;
 }
 
-.nav-link,
-.badge {
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+/* Для подменю тоже */
+[data-theme="light"] .dropdown-submenu .dropdown-item {
+    color: var(--dropdown-text-light) !important;
 }
 
-.nav-link {
-    font-size: 0.75rem;
-    padding: 0.5rem 0.75rem;
+[data-theme="light"] .dropdown-submenu .dropdown-item:hover {
+    color: var(--dropdown-text-hover-light) !important;
 }
 
-/* Навигационные острова */
+/* Стили для выпадающего меню в светлой теме */
+[data-theme="light"] .dropdown-menu {
+    background-color: var(--dropdown-bg-light) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="light"] .dropdown-item {
+    color: var(--dropdown-text-light) !important;
+}
+
+[data-theme="light"] .dropdown-item:hover {
+    background-color: var(--dropdown-hover-bg-light) !important;
+    color: var(--dropdown-hover-text-light) !important;
+}
+
+[data-theme="light"] .dropdown-divider {
+    border-color: var(--border-color) !important;
+}
+
+/* Стили для наведения в светлой теме */
+[data-theme="light"] .navbar-island .nav-link:hover,
+[data-theme="light"] .navbar-island .btn:hover {
+    color: var(--dropdown-hover-text-light) !important;
+}
+
+/* Убедитесь, что подменю также белые */
+[data-theme="light"] .dropdown-submenu .dropdown-menu.dropdown-sub {
+    background-color: var(--dropdown-bg-light) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Переопределение стилей для мобильных устройств */
+@media (max-width: 992px) {
+    [data-theme="light"] .dropdown-menu {
+        background-color: var(--dropdown-bg-light) !important;
+    }
+}
+
+/* Навигация - четыре острова */
 .navbar-island {
     background: transparent !important;
     left: 0;
@@ -187,14 +223,14 @@ footer {
     right: 300px;
 }
 
-/* Стили навигационных ссылок */
+/* Добавьте эти стили в раздел навигации */
 .navbar-island .nav-link {
-    color: var(--text-muted) !important;
+    color: var(--text-muted) !important; /* Более светлый цвет текста */
     transition: color 0.3s ease;
 }
 
 .navbar-island .nav-link:hover {
-    color: var(--text-light) !important;
+    color: var(--text-light) !important; /* Еще светлее при наведении */
 }
 
 .navbar-island .dropdown-item {
@@ -206,6 +242,7 @@ footer {
     background-color: transparent;
 }
 
+/* Стили для счетчиков */
 .navbar-island .badge {
     font-size: 0.6rem;
     margin-left: 3px;
@@ -221,49 +258,33 @@ footer {
     padding: 0.25rem 0.5rem;
 }
 
-/* ======================
-   Выпадающие меню
-   ====================== */
-[data-theme="light"] .dropdown-menu {
-    background-color: var(--dropdown-bg-light) !important;
-    border-color: var(--border-color) !important;
+.navbar-wrapper {
+    background-color: var(--navbar-color) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 1030;
 }
 
-[data-theme="light"] .dropdown-item {
-    color: var(--dropdown-text-light) !important;
-    transition: color 0.2s ease;
+.navbar {
+    background-color: var(--navbar-color) !important;
+    transition: background-color 0.3s ease;
 }
 
-[data-theme="light"] .dropdown-item:hover {
-    color: var(--dropdown-text-hover-light) !important;
-    background-color: var(--dropdown-hover-bg-light) !important;
+.nav-link,
+.badge {
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
-[data-theme="light"] .dropdown-submenu .dropdown-item {
-    color: var(--dropdown-text-light) !important;
+.nav-link {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
 }
 
-[data-theme="light"] .dropdown-submenu .dropdown-item:hover {
-    color: var(--dropdown-text-hover-light) !important;
-}
-
-[data-theme="light"] .dropdown-divider {
-    border-color: var(--border-color) !important;
-}
-
-[data-theme="light"] .navbar-island .nav-link:hover,
-[data-theme="light"] .navbar-island .btn:hover {
-    color: var(--dropdown-hover-text-light) !important;
-}
-
-[data-theme="light"] .dropdown-submenu .dropdown-menu.dropdown-sub {
-    background-color: var(--dropdown-bg-light) !important;
-    border-color: var(--border-color) !important;
-}
-
-/* ======================
-   Герой-секция
-   ====================== */
 .hero-section {
     position: relative;
     display: flex;
@@ -320,18 +341,7 @@ footer {
     transition: all 0.3s ease;
 }
 
-/* ======================
-   Карточки товаров
-   ====================== */
-.products-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    padding: 0 1rem;
-    margin: 0 auto;
-    max-width: 1300px;
-}
-
+/* Карточки */
 .card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -358,7 +368,8 @@ footer {
     flex: 1;
     flex-direction: column;
     padding: 1.5rem;
-    padding-bottom: 1rem;
+    padding-bottom: 1rem; /* Только нижний отступ */
+
 }
 
 .card-title {
@@ -390,9 +401,7 @@ footer {
     top: 10px;
 }
 
-/* ======================
-   Текст и типографика
-   ====================== */
+/* Текст */
 .text-muted {
     color: var(--text-muted) !important;
 }
@@ -402,9 +411,7 @@ footer {
     text-decoration: line-through;
 }
 
-/* ======================
-   Формы и элементы ввода
-   ====================== */
+/* Формы */
 .form-control,
 .form-select,
 .size-select {
@@ -419,9 +426,7 @@ footer {
     color: var(--input-text);
 }
 
-/* ======================
-   Таблицы
-   ====================== */
+/* Таблицы */
 .table {
     --bs-table-bg: var(--card-bg);
     --bs-table-border-color: var(--border-color);
@@ -438,9 +443,7 @@ footer {
     --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
 }
 
-/* ======================
-   Кнопки
-   ====================== */
+/* Кнопки */
 .btn-outline-dark {
     border-color: var(--border-color);
     color: var(--text-color);
@@ -459,16 +462,12 @@ footer {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* ======================
-   Хлебные крошки
-   ====================== */
+/* Хлебные крошки */
 .breadcrumb {
     font-size: 0.75rem;
 }
 
-/* ======================
-   Корзина
-   ====================== */
+/* Стили для корзины */
 .cart-table {
     margin-bottom: 2rem;
 }
@@ -511,12 +510,9 @@ footer {
     width: 50px;
 }
 
-/* ======================
-   Админ-панель
-   ====================== */
-.admin-mode .navbar-island-left,
-.admin-mode .navbar-island-center {
-    display: none !important;
+[data-theme="dark"] .img-thumbnail {
+    background-color: #2d2d2d;
+    border-color: #444;
 }
 
 .admin-container {
@@ -644,14 +640,39 @@ footer {
     padding: 20px;
 }
 
-[data-theme="dark"] .img-thumbnail {
-    background-color: #2d2d2d;
-    border-color: #444;
+/* Контейнер для карточек товаров */
+.products-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 0 1rem;
+    margin: 0 auto;
+    max-width: 1300px;
 }
 
-/* ======================
-   Адаптивные стили
-   ====================== */
+/* Стили для текста и ссылок в навбаре */
+.navbar-island .nav-link,
+.navbar-island .btn {
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .navbar-island .nav-link,
+[data-theme="dark"] .navbar-island .btn {
+    color: #6c757d;
+}
+
+.navbar-island .nav-link:hover,
+.navbar-island .btn:hover {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .navbar-island .nav-link:hover,
+[data-theme="dark"] .navbar-island .btn:hover {
+    color: #adb5bd;
+}
+
+/* Адаптивность */
 @media (max-width: 1200px) {
     .navbar-island-left {
         left: 250px;
@@ -678,11 +699,6 @@ footer {
     }
     main {
         margin-top: 8rem;
-    }
-    
-    /* Для выпадающих меню на мобильных */
-    [data-theme="light"] .dropdown-menu {
-        background-color: var(--dropdown-bg-light) !important;
     }
 }
 
@@ -787,7 +803,21 @@ footer {
     }
 }
 
-/* Оптимизация для устройств без hover */
+/* Оптимизированные стили без удаления старых */
+.navbar-wrapper {
+    background-color: var(--navbar-color) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1030;
+}
+
+.navbar {
+    background-color: var(--navbar-color) !important;
+}
+
+/* Улучшенные переходы для мобильных устройств */
 @media (hover: none) {
     .card:hover {
         transform: none;

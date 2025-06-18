@@ -3,6 +3,77 @@
 <head>
     <%- include('../partials/head', { title: 'Редактировать товар' }) %>
     <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* Стили для галочек в выпадающем меню */
+        .form-select option:checked {
+            background-color: var(--bs-primary);
+            color: var(--bs-white);
+        }
+        
+        .dark-mode .form-select option:checked {
+            background-color: var(--bs-gray-400);
+            color: var(--bs-dark);
+        }
+        
+        /* Компактный макет */
+        .product-edit-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+        
+        .image-preview-container {
+            width: 300px;
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--bs-border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bs-body-bg);
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .upload-area {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--bs-secondary);
+        }
+        
+        .upload-text {
+            color: var(--bs-secondary);
+            margin-bottom: 0;
+        }
+        
+        @media (max-width: 992px) {
+            .product-edit-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-preview-container {
+                width: 100%;
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="navbar-wrapper">
@@ -11,75 +82,81 @@
 
     <div class="container mt-4 admin-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Редактировать товар</h2>
-            <a href="/admin/products" class="btn btn-outline-dark">
-                <i class="bi bi-arrow-left"></i> Назад
+            <h4>Редактировать товар</h4>
+            <a href="/admin/products " class="btn btn-outline-dark">
+                <i class="bi bi-arrow-left" style="width: 250px; font-size: 14px;"></i> Назад
             </a>
         </div>
         
         <form action="/admin/products/edit/<%= product.id %>" method="POST" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="name" class="form-label">Название товара</label>
-                <input type="text" class="form-control" id="name" name="name" value="<%= product.name %>" required>
+            <div class="product-edit-container">
+                <div class="form-fields">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Название товара</label>
+                        <input type="text" class="form-control" id="name" name="name" value="<%= product.name %>" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Описание</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required><%= product.description %></textarea>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="price" class="form-label">Цена (₽)</label>
+                            <input type="number" step="0.01" class="form-control" id="price" name="price" value="<%= product.price %>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="old_price" class="form-label">Старая цена (₽)</label>
+                            <input type="number" step="0.01" class="form-control" id="old_price" name="old_price" value="<%= product.old_price || '' %>">
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="category" class="form-label">Категория</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="Футболки" <%= product.category === 'Футболки' ? 'selected' : '' %>>Футболки</option>
+                                <option value="Худи" <%= product.category === 'Худи' ? 'selected' : '' %>>Худи</option>
+                                <option value="Рубашки" <%= product.category === 'Рубашки' ? 'selected' : '' %>>Рубашки</option>
+                                <option value="Пиджаки" <%= product.category === 'Пиджаки' ? 'selected' : '' %>>Пиджаки</option>
+                                <option value="Пальто" <%= product.category === 'Пальто' ? 'selected' : '' %>>Пальто</option>
+                                <option value="Джинсы" <%= product.category === 'Джинсы' ? 'selected' : '' %>>Джинсы</option>
+                                <option value="Брюки" <%= product.category === 'Брюки' ? 'selected' : '' %>>Брюки</option>
+                                <option value="Куртки" <%= product.category === 'Куртки' ? 'selected' : '' %>>Куртки</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="gender" class="form-label">Пол</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="Мужское" <%= product.gender === 'Мужское' ? 'selected' : '' %>>Мужское</option>
+                                <option value="Женское" <%= product.gender === 'Женское' ? 'selected' : '' %>>Женское</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="quantity" class="form-label">Количество</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" min="0" value="<%= product.quantity %>" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="image-preview-container">
+                    <div class="upload-area" id="uploadArea">
+                        <% if (product.image) { %>
+                            <img src="/images/<%= product.image %>" id="imagePreview" class="image-preview">
+                        <% } else { %>
+                            <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                            <p class="upload-text">Перетащите изображение сюда или кликните для выбора</p>
+                            <img id="imagePreview" class="image-preview d-none">
+                        <% } %>
+                        <input type="file" id="image" name="image" accept="image/*" class="d-none">
+                        <input type="hidden" name="existing_image" value="<%= product.image || '' %>">
+                    </div>
+                </div>
             </div>
             
-            <div class="mb-3">
-                <label for="description" class="form-label">Описание</label>
-                <textarea class="form-control" id="description" name="description" rows="3" required><%= product.description %></textarea>
-            </div>
-            
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="price" class="form-label">Цена (₽)</label>
-                    <input type="number" step="0.01" class="form-control" id="price" name="price" value="<%= product.price %>" required>
-                </div>
-                <div class="col-md-6">
-                    <label for="old_price" class="form-label">Старая цена (₽)</label>
-                    <input type="number" step="0.01" class="form-control" id="old_price" name="old_price" value="<%= product.old_price || '' %>">
-                </div>
-            </div>
-            
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="category" class="form-label">Категория</label>
-                    <select class="form-select" id="category" name="category" required>
-                        <% categories.forEach(category => { %>
-                            <option value="<%= category.category %>" <%= category.category === product.category ? 'selected' : '' %>>
-                                <%= category.category %>
-                            </option>
-                        <% }); %>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="gender" class="form-label">Пол</label>
-                    <select class="form-select" id="gender" name="gender" required>
-                        <option value="Мужское" <%= product.gender === 'Мужское' ? 'selected' : '' %>>Мужское</option>
-                        <option value="Женское" <%= product.gender === 'Женское' ? 'selected' : '' %>>Женское</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="quantity" class="form-label">Количество</label>
-                    <input type="number" class="form-control" id="quantity" name="quantity" min="0" value="<%= product.quantity %>" required>
-                </div>
-            </div>
-            
-            <div class="mb-4">
-                <label class="form-label">Изображение товара</label>
-                <div class="upload-area" id="uploadArea">
-                    <% if (product.image) { %>
-                        <img src="/images/<%= product.image %>" id="imagePreview" class="image-preview">
-                    <% } else { %>
-                        <i class="bi bi-cloud-arrow-up upload-icon"></i>
-                        <p class="upload-text">Перетащите изображение сюда или кликните для выбора</p>
-                        <img id="imagePreview" class="image-preview d-none">
-                    <% } %>
-                    <input type="file" id="image" name="image" accept="image/*" class="d-none">
-                    <input type="hidden" name="existing_image" value="<%= product.image || '' %>">
-                </div>
-            </div>
-            
-            <div class="d-grid">
-                <button type="submit" class="btn btn-dark btn-lg py-2 admin-submit-btn">
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-dark btn-lg py-2 admin-submit-btn" style="width: 250px; font-size: 14px;">
                     <i class="bi bi-save"></i> Сохранить изменения
                 </button>
             </div>

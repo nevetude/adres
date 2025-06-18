@@ -202,6 +202,24 @@
             text-align: center;
             margin-bottom: 10px;
         }
+
+        /* Новые стили для заголовка и итоговой суммы */
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .order-header h6 {
+            margin: 0;
+        }
+
+        .order-total {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
     </style>
 </head>
 <body>
@@ -246,7 +264,10 @@
             </div>
             
             <!-- Таблица состава заказа -->
-            <h6 class="mt-5">Состав заказа</h6>
+            <div class="order-header">
+                <h6>Состав заказа</h6>
+                <div class="order-total">Итого: <%= typeof order.total === 'number' ? order.total.toFixed(2) : '0.00' %> ₽</div>
+            </div>
             <table class="order-table">
                 <thead>
                     <tr>
@@ -278,11 +299,6 @@
                         </tr>
                     <% }); %>
                 </tbody>
-                <tfoot>
-                    <tr class="total-row">
-                        <p><strong>Итого:</strong> <%= typeof order.total === 'number' ? order.total.toFixed(2) : '0.00' %> ₽</p>
-                    </tr>
-                </tfoot>
             </table>
             
             <!-- Кнопка подтверждения -->
@@ -301,6 +317,12 @@
         const cardCvvInput = document.getElementById('bank-card-cvv');
         const confirmBtn = document.getElementById('confirm-payment-btn');
         
+        // Элементы для отображения ошибок
+        const cardNumberError = document.getElementById('card-number-error');
+        const holderError = document.getElementById('holder-error');
+        const expiryError = document.getElementById('expiry-error');
+        const cvvError = document.getElementById('cvv-error');
+        
         // Функция для определения банка по первым цифрам
         function getBankColor(number) {
             const cleaned = number.replace(/\D/g, ''); // Удаляем все нецифровые символы
@@ -318,12 +340,50 @@
             }
         }
         
+        // Проверка валидности срока действия карты (минимум 06/25)
+        function isExpiryValid(expiry) {
+            if (expiry.length !== 5) return false;
+            
+            const [monthStr, yearStr] = expiry.split('/');
+            const month = parseInt(monthStr, 10);
+            const year = parseInt(yearStr, 10);
+            
+            // Проверка формата
+            if (isNaN(month)) return false;
+            if (isNaN(year)) return false;
+            if (month < 1 || month > 12) return false;
+            
+            // Получаем текущую дату
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear() % 100; // Получаем последние 2 цифры года
+            const currentMonth = currentDate.getMonth() + 1;
+            
+            // Проверяем, что срок не меньше 06/25
+            if (year < 25) return false;
+            if (year === 25 && month < 6) return false;
+            
+            return true;
+        }
+        
         // Проверка заполненности всех полей
         function checkForm() {
-            const cardNumberValid = cardNumberInput.value.replace(/\s/g, '').length === 16;
-            const cardHolderValid = cardHolderInput.value.trim().length > 0;
-            const cardExpiryValid = cardExpiryInput.value.length === 5;
-            const cardCvvValid = cardCvvInput.value.length === 3;
+            const cardNumber = cardNumberInput.value.replace(/\s/g, '');
+            const cardNumberValid = cardNumber.length === 16;
+            
+            const cardHolder = cardHolderInput.value.trim();
+            const cardHolderValid = cardHolder.length > 0 && /^[A-Z\s]+$/.test(cardHolder);
+            
+            const cardExpiry = cardExpiryInput.value;
+            const cardExpiryValid = isExpiryValid(cardExpiry);
+            
+            const cardCvv = cardCvvInput.value;
+            const cardCvvValid = cardCvv.length === 3 && /^\d+$/.test(cardCvv);
+            
+            // Управление отображением ошибок
+            cardNumberInput.parentElement.classList.toggle('has-error', !cardNumberValid);
+            cardHolderInput.parentElement.classList.toggle('has-error', !cardHolderValid);
+            cardExpiryInput.parentElement.classList.toggle('has-error', !cardExpiryValid);
+            cardCvvInput.parentElement.classList.toggle('has-error', !cardCvvValid);
             
             return cardNumberValid && cardHolderValid && cardExpiryValid && cardCvvValid;
         }
@@ -356,15 +416,17 @@
             
             if (value.length > 2) {
                 value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            } else if (value.length === 2) {
+                value += '/';
             }
             
             e.target.value = value;
             confirmBtn.disabled = !checkForm();
         });
         
-        // Обработчик ввода имени владельца
+        // Обработчик ввода имени владельца (только английские буквы)
         cardHolderInput.addEventListener('input', (e) => {
-            e.target.value = e.target.value.toUpperCase();
+            e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '').toUpperCase();
             confirmBtn.disabled = !checkForm();
         });
         
@@ -374,40 +436,40 @@
             confirmBtn.disabled = !checkForm();
         });
         
-    // Обработчик кнопки подтверждения
-    confirmBtn.addEventListener('click', async () => {
-        try {
-            // Показываем индикатор загрузки
-            confirmBtn.disabled = true;
-            confirmBtn.textContent = 'Обработка...';
+        // Обработчик кнопки подтверждения
+        confirmBtn.addEventListener('click', async () => {
+            try {
+                // Показываем индикатор загрузки
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Обработка...';
 
-            const orderId = '<%= order.id %>';
-            
-            // Отправляем запрос на подтверждение оплаты
-            const response = await fetch(`/cart/order/complete/${orderId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'same-origin'
-            });
+                const orderId = '<%= order.id %>';
+                
+                // Отправляем запрос на подтверждение оплаты
+                const response = await fetch(`/cart/order/complete/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'same-origin'
+                });
 
-            if (response.ok) {
-                window.location.href = `/cart/order/success/${orderId}`;
-            } else {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Ошибка сервера');
+                if (response.ok) {
+                    window.location.href = `/cart/order/success/${orderId}`;
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Ошибка сервера');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert(error.message || 'Произошла ошибка при обработке платежа');
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Подтвердить оплату';
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert(error.message || 'Произошла ошибка при обработке платежа');
-            confirmBtn.disabled = false;
-            confirmBtn.textContent = 'Подтвердить оплату';
-        }
-    });
+        });
 
-    // Изначально деактивируем кнопку
-    confirmBtn.disabled = true;
+        // Изначально деактивируем кнопку
+        confirmBtn.disabled = true;
     </script>
 </body>
 </html>

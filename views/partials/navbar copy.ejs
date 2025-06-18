@@ -1,0 +1,336 @@
+<nav class="navbar navbar-expand-lg navbar-island">
+    <div class="container">
+        <!-- Левый остров (логотип) - всегда виден, но не кликабелен для админа -->
+        <div class="navbar-island-left">
+            <% if (user && user.role === 'admin') { %>
+                <span class="navbar-brand">
+                    <img src="/images/misc/adres_logo.png" alt="DOOMSHOP Logo" width="80" height="40" class="d-inline-block align-top rounded">
+                </span>
+            <% } else { %>
+                <a class="navbar-brand" href="/">
+                    <img src="/images/misc/adres_logo.png" alt="DOOMSHOP Logo" width="80" height="40" class="d-inline-block align-top rounded">
+                </a>
+            <% } %>
+        </div>
+
+        <!-- Центральный остров (основное меню) - скрыт для админа -->
+        <% if (!user || user.role !== 'admin') { %>
+            <div class="navbar-island-center">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item dropdown" onmouseover="showDropdown('menDropdown')" onmouseout="hideDropdown('menDropdown')">
+                            <a class="nav-link dropdown-toggle text-uppercase" href="/men" id="menDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Мужское
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="menDropdown" style="font-size: 12px;">
+                                <li class="dropdown-submenu" onmouseover="showSubmenu(this)" onmouseout="hideSubmenu(this)">
+                                    <span class="dropdown-item dropdown-toggle text-uppercase" href="/category/Мужское/Верхняя одежда">Верхняя одежда</span>
+                                    <ul class="dropdown-menu dropdown-sub" style="font-size: 12px;">
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Мужское/Футболки">Футболки</a></li>
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Мужское/Худи">Худи</a></li>
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Мужское/Рубашки">Рубашки</a></li>
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Мужское/Пиджаки">Пиджаки</a></li>
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Мужское/Пальто">Пальто</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu" onmouseover="showSubmenu(this)" onmouseout="hideSubmenu(this)">
+                                    <span class="dropdown-item dropdown-toggle text-uppercase" href="/category/Мужское/Нижняя одежда">Нижняя одежда</span>
+                                    <ul class="dropdown-menu dropdown-sub" style="font-size: 12px;">
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Мужское/Джинсы">Джинсы</a></li>
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Мужское/Брюки">Брюки</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown" onmouseover="showDropdown('womenDropdown')" onmouseout="hideDropdown('womenDropdown')">
+                            <a class="nav-link dropdown-toggle text-uppercase" href="/women" id="womenDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Женское
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="womenDropdown" style="font-size: 12px;">
+                                <li class="dropdown-submenu" onmouseover="showSubmenu(this)" onmouseout="hideSubmenu(this)">
+                                    <span class="dropdown-item dropdown-toggle text-uppercase">Верхняя одежда</span>
+                                    <ul class="dropdown-menu dropdown-sub" style="font-size: 12px;">
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Женское/Футболки">Футболки</a></li>
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Женское/Худи">Худи</a></li>
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Женское/Рубашки">Рубашки</a></li>
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Женское/Куртки">Куртки</a></li>
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Женское/Пальто">Пальто</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu" onmouseover="showSubmenu(this)" onmouseout="hideSubmenu(this)">
+                                    <span class="dropdown-item dropdown-toggle text-uppercase">Нижняя одежда</span>
+                                    <ul class="dropdown-menu dropdown-sub" style="font-size: 12px;">
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Женское/Джинсы">Джинсы</a></li>
+                                        <li><a class="dropdown-item text-uppercase" href="/category/Женское/Брюки">Брюки</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-uppercase" href="/products">Все товары</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Остров кнопки темы -->
+        <div class="navbar-island-theme">
+            <button id="themeToggle" class="btn btn-link nav-link py-2">
+                <i class="bi bi-moon-fill"></i>
+            </button>
+        </div>
+
+        <!-- Правый остров (пользовательские элементы) -->
+        <div class="navbar-island-right">
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <% if (user && user.role === 'admin') { %>
+                        <li class="nav-item">
+                            <a class="nav-link text-uppercase" href="/admin/products">Товары</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-uppercase" href="/admin/orders">Заказы</a>
+                        </li>
+                    <% } %>
+
+                    <% if (user) { %>
+                        <% if (user.role !== 'admin') { %>
+                        <li class="nav-item">
+                            <a class="nav-link text-uppercase" href="/orders">
+                                <i class="bi bi-bag"></i> Заказы
+                                <span id="ordersCounter" class="badge bg-danger" style="display: none;"></span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/favorites">
+                                <i class="bi bi-heart"></i> Избранное
+                                <% if (favorites && favorites.length > 0) { %>
+                                    <span id="favoritesCounter" class="badge bg-danger"><%= favorites.length %></span>
+                                <% } %>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/cart">
+                                <i class="bi bi-cart"></i> Корзина
+                                <% if (cart && cart.length > 0) { %>
+                                    <span class="badge bg-danger"><%= cart.reduce((total, item) => total + item.quantity, 0) %></span>
+                                <% } %>
+                            </a>
+                        </li>
+                        <% } %>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-uppercase" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <% if (user.role === 'admin') { %>
+                                    <i class="bi bi-gear"></i>
+                                <% } else { %>
+                                    <i class="bi bi-person"></i>
+                                <% } %>
+                                <%= user.name || user.email %>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" style="font-size: 12px;">
+                                <li><a class="dropdown-item text-uppercase" href="/auth/logout">Выйти</a></li>
+                            </ul>
+                        </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link text-uppercase" href="/auth/login">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-uppercase" href="/auth/register">Регистрация</a>
+                        </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .navbar,
+    .navbar .nav-link,
+    .navbar .dropdown-item,
+    .navbar .dropdown-menu {
+        font-size: 12px !important;
+    }
+
+    .navbar-island-left span.navbar-brand {
+        cursor: default;
+        opacity: 0.7;
+    }
+
+    .dropdown-menu {
+        transition: all 0.3s ease;
+        opacity: 0;
+        display: block;
+        visibility: hidden;
+        transform: translateY(10px);
+        background-color: #2c2c2c;
+        border-color: #444;
+    }
+    
+    .dropdown-item {
+        color: #f8f9fa;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #3d3d3d;
+        color: #fff;
+    }
+    
+    .dropdown-divider {
+        border-color: #444;
+    }
+    
+    .dropdown:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        transition-delay: 0.1s;
+    }
+    
+    .dropdown-submenu {
+        position: relative;
+    }
+    
+    .dropdown-submenu .dropdown-menu.dropdown-sub {
+        top: 0;
+        left: 100%;
+        margin-top: -0.5rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+        background-color: #2c2c2c;
+    }
+    
+    .dropdown-submenu:hover .dropdown-menu.dropdown-sub {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        transition-delay: 0.2s;
+    }
+    
+    [data-bs-theme="light"] .dropdown-menu {
+        background-color: #2c2c2c;
+        border-color: #444;
+    }
+    
+    [data-bs-theme="light"] .dropdown-item {
+        color: #f8f9fa;
+    }
+    
+    [data-bs-theme="light"] .dropdown-item:hover {
+        background-color: #3d3d3d;
+        color: #fff;
+    }
+    
+    @media (max-width: 992px) {
+        .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+            display: none;
+        }
+        
+        .dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-submenu .dropdown-menu.dropdown-sub {
+            position: static;
+            margin-left: 1rem;
+            border-left: 1px solid rgba(0,0,0,.15);
+        }
+    }
+</style>
+
+<script>
+    // Функции для управления выпадающими меню
+    function showDropdown(id) {
+        if (window.innerWidth > 992) {
+            const dropdown = document.getElementById(id);
+            const menu = dropdown.nextElementSibling;
+            menu.style.opacity = '1';
+            menu.style.visibility = 'visible';
+            menu.style.transform = 'translateY(0)';
+            dropdown.setAttribute('aria-expanded', 'true');
+        }
+    }
+    
+    function hideDropdown(id) {
+        if (window.innerWidth > 992) {
+            const dropdown = document.getElementById(id);
+            const menu = dropdown.nextElementSibling;
+            menu.style.opacity = '0';
+            menu.style.visibility = 'hidden';
+            menu.style.transform = 'translateY(10px)';
+            dropdown.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    function showSubmenu(element) {
+        if (window.innerWidth > 992) {
+            const submenu = element.querySelector('.dropdown-sub');
+            submenu.style.opacity = '1';
+            submenu.style.visibility = 'visible';
+            submenu.style.transform = 'translateY(0)';
+        }
+    }
+    
+    function hideSubmenu(element) {
+        if (window.innerWidth > 992) {
+            const submenu = element.querySelector('.dropdown-sub');
+            submenu.style.opacity = '0';
+            submenu.style.visibility = 'hidden';
+            submenu.style.transform = 'translateY(10px)';
+        }
+    }
+
+    // Функция для обновления счетчиков
+    function updateNavCounters() {
+        // Обновление счетчика корзины
+        fetch('/cart/favorite/count')
+            .then(response => response.json())
+            .then(data => {
+                const favCounter = document.getElementById('favoritesCounter');
+                if (data.count > 0) {
+                    favCounter.textContent = data.count;
+                    favCounter.style.display = 'inline';
+                } else {
+                    favCounter.style.display = 'none';
+                }
+            });
+            
+        // Обновление счетчика заказов (если нужно)
+        fetch('/api/orders/count')
+            .then(response => response.json())
+            .then(data => {
+                const ordersCounter = document.getElementById('ordersCounter');
+                if (data.count > 0) {
+                    ordersCounter.textContent = data.count;
+                    ordersCounter.style.display = 'inline';
+                } else {
+                    ordersCounter.style.display = 'none';
+                }
+            });
+    }
+
+    // Обработчик изменения темы
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                this.innerHTML = newTheme === 'dark' ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+            });
+        }
+    });
+</script>

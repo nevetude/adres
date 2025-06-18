@@ -53,7 +53,7 @@ router.route('/login')
             });
         }
     });
-
+    
 // Регистрация
 router.route('/register')
     .get((req, res) => {
@@ -87,7 +87,19 @@ router.route('/register')
             );
             
             req.session.user = newUser;
-            res.redirect('/');
+            
+            // Сохраняем сессию перед редиректом
+            req.session.save(err => {
+                if (err) {
+                    console.error('Session save error:', err);
+                    return res.render('register', {
+                        title: 'Регистрация',
+                        error: 'Ошибка при создании пользователя',
+                        formData: { email, name }
+                    });
+                }
+                res.redirect('/');
+            });
         } catch (err) {
             res.render('register', {
                 title: 'Регистрация',

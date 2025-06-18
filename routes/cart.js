@@ -114,7 +114,7 @@ router.route('/checkout')
         const cart = req.session.cart || [];
         if (cart.length === 0) return res.redirect('/cart');
         
-        res.render('cart/checkout', {
+        res.render('order/checkout', {
             title: 'Оформление заказа',
             cart,
             total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
