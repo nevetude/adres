@@ -14,6 +14,11 @@
         .order-table th {
             background-color: var(--navbar-color);
             color: var(--text-light);
+            [data-theme="light"] & {
+                background-color: #ffffff;
+                color: #424242;
+                border-bottom: 2px solid #dee2e6;
+            }
         }
         
         .order-status {
@@ -21,9 +26,12 @@
             border-radius: 4px;
             font-size: 0.875rem;
             font-weight: 500;
+            display: inline-block;
+            min-width: 120px;
+            text-align: center;
         }
         
-        .status-new {
+        .status-pending {
             background-color: #cce5ff;
             color: #004085;
         }
@@ -43,7 +51,7 @@
             color: #721c24;
         }
         
-        [data-theme="dark"] .status-new {
+        [data-theme="dark"] .status-pending {
             background-color: #002752;
             color: #90caf9;
         }
@@ -62,6 +70,24 @@
             background-color: #3a0d0d;
             color: #e57373;
         }
+        
+        .order-number-btn {
+            background-color: #4e4e4e;
+            color: white;
+            border: none;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            min-width: 100px;
+            text-align: center;
+            text-decoration: none !important;
+            display: inline-block;
+        }
+        
+        .order-number-btn:hover {
+            background-color: #343a40;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -70,7 +96,6 @@
     </div>
 
     <div class="container mt-5 pt-4">
-
         <h4 class="mb-4">Мои заказы</h4>
         
         <% if (orders && orders.length > 0) { %>
@@ -78,38 +103,36 @@
                 <table class="table order-table">
                     <thead>
                         <tr>
-                            <th>Номер</th>
-                            <th>Дата</th>
+                            <th>Заказ</th>
                             <th>Статус</th>
+                            <th>Дата</th>
                             <th>Сумма</th>
                             <th>Товары</th>
-                            <th>Подробнее</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% orders.forEach(order => { %>
                             <tr>
-                                <td>#<%= order.id || 'Н/Д' %></td>
-                                <td><%= order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : 'Н/Д' %></td>
+                                <td>
+                                    <a href="/order/<%= order.id %>" class="order-number-btn">
+                                        Заказ #<%= order.id || 'Н/Д' %>
+                                    </a>
+                                </td>
                                 <td>
                                     <span class="order-status 
-                                        <% if (order.status === 'Новый') { %>status-new<% } %>
+                                        <% if (order.status === 'В доставке') { %>status-pending<% } %>
                                         <% if (order.status === 'В обработке') { %>status-processing<% } %>
                                         <% if (order.status === 'Завершен') { %>status-completed<% } %>
                                         <% if (order.status === 'Отменен') { %>status-cancelled<% } %>">
                                         <%= order.status || 'Статус неизвестен' %>
                                     </span>
                                 </td>
+                                <td><%= order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : 'Н/Д' %></td>
                                 <td>
                                     <%= order.total ? Number(order.total).toFixed(2) + ' ₽' : 'Н/Д' %>
                                 </td>
                                 <td>
                                     <%= order.productsCount || 0 %> шт.
-                                </td>
-                                <td>
-                                    <a href="/order/<%= order.id %>" class="btn btn-sm btn-dark">
-                                        Подробнее
-                                    </a>
                                 </td>
                             </tr>
                         <% }); %>

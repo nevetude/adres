@@ -1,93 +1,271 @@
 :root {
     color-scheme: light dark;
-    
+
     /* Цвета для светлой темы */
     --bg-color: #fcfcfc;
-    --text-color: #212529;
-    --card-bg: #f8f9fa;
-    --card-text: #212529;
-    --footer-bg: #343a40;
-    --border-color: #dee2e6;
-    --primary-color: #0d6efd;
-    --danger-color: #dc3545;
-    --navbar-color: #2b2b2b;
-    
-    /* Элементы форм */
-    --input-bg: #ffffff;
-    --input-border: #ced4da;
-    --input-text: #212529;
-    
-    /* Текст */
-    --text-muted: #6c757d;
-    --text-light: #f8f9fa;
-    
-    /* Хлебные крошки */
+    --border-color: #e0e0e0;
+    --breadcrumb-active: #495057;
     --breadcrumb-divider: #6c757d;
     --breadcrumb-link: #6c757d;
-    --breadcrumb-active: #495057;
+    --card-bg: #ffffff;
+    --card-text: #212529;
+    --danger-color: #dc3545;
+    --footer-bg: #161616;
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --input-text: #2c2c2c;
+    --island-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --navbar-color: rgba(255, 255, 255, 0.9);
+    --primary-color: #0d6efd;
+    --quantity-btn-bg: #f8f9fa;
+    --quantity-btn-border: #dee2e6;
+    --quantity-btn-hover: #e9ecef;
+    --quantity-input-bg: transparent;
+    --quantity-input-border: #dee2e6;
+    --text-color: #212529;
+    --text-light: #f8f9fa;
+    --text-muted: #6c757d;
+    --dropdown-bg-light: #ffffff;
+    --dropdown-text-light: #212529;
+    --dropdown-hover-bg-light: #f8f9fa;
+    --dropdown-hover-text-light: #303030;
+    --dropdown-text-light: #212529;          /* Стандартный цвет текста */
+    --dropdown-text-hover-light: #161616;    /* Темный цвет при наведении */
+
+
 }
 
 [data-theme="dark"] {
     /* Цвета для темной темы */
     --bg-color: #1a1a1a;
-    --text-color: #ffffff;
+    --border-color: #444;
+    --breadcrumb-active: #e9ecef;
+    --breadcrumb-divider: #adb5bd;
+    --breadcrumb-link: #adb5bd;
     --card-bg: #2d2d2d;
     --card-text: #ffffff;
-    --footer-bg: #1a1a1a;
-    --border-color: #444;
-    --primary-color: #0d6efd;
-    --danger-color: #dc3545;
-    
-    /* Элементы форм */
+    --footer-bg: #161616;
+    --glass-bg: rgba(43, 43, 43, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.1);
     --input-bg: #2d2d2d;
     --input-border: #444;
     --input-text: #ffffff;
-    
-    /* Текст */
-    --text-muted: #adb5bd;
+    --island-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --navbar-color: rgba(43, 43, 43, 0.9);
+    --quantity-btn-bg: #2d2d2d;
+    --quantity-btn-border: #444;
+    --quantity-btn-hover: #3d3d3d;
+    --quantity-input-bg: #2d2d2d;
+    --quantity-input-border: #444;
+    --text-color: #ffffff;
     --text-light: #ffffff;
-    
-    /* Хлебные крошки */
-    --breadcrumb-divider: #adb5bd;
-    --breadcrumb-link: #adb5bd;
-    --breadcrumb-active: #e9ecef;
+    --text-muted: #adb5bd;
 }
 
 /* Базовые стили */
 * {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    padding-top: 56px;
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding-bottom: 0;
+    padding-top: 80px;
+    position: relative;
 }
 
 main {
     flex: 1 0 auto;
-    padding-bottom: 2rem;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 10rem;
+    width: 100%;
+    min-height: calc(100vh - 280px); /* Высота viewport минус высота header/footer */
+
 }
 
 footer {
-    flex-shrink: 0;
-    margin-top: auto;
     background-color: var(--footer-bg) !important;
+    margin-top: auto; /* Это заставит футер прижиматься к низу */
+    min-height: 200px;
+    position: relative; /* Изменяем с absolute на relative */
+    width: 100%;
+}
+/* В файле style.css добавьте */
+.admin-mode .navbar-island-left,
+.admin-mode .navbar-island-center {
+    display: none !important;
+}
+/* Затем добавьте эти стили: */
+[data-theme="light"] .dropdown-item {
+    color: var(--dropdown-text-light) !important;  /* Строка, задающая цвет текста */
+    transition: color 0.2s ease;
 }
 
+[data-theme="light"] .dropdown-item:hover {
+    color: var(--dropdown-text-hover-light) !important;  /* Строка, делающая текст темнее при наведении */
+    background-color: var(--dropdown-hover-bg-light) !important;
+}
 
-/* Навигация */
-.navbar-wrapper {
-    position: fixed;
-    top: 0;
+/* Для подменю тоже */
+[data-theme="light"] .dropdown-submenu .dropdown-item {
+    color: var(--dropdown-text-light) !important;
+}
+
+[data-theme="light"] .dropdown-submenu .dropdown-item:hover {
+    color: var(--dropdown-text-hover-light) !important;
+}
+
+/* Стили для выпадающего меню в светлой теме */
+[data-theme="light"] .dropdown-menu {
+    background-color: var(--dropdown-bg-light) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="light"] .dropdown-item {
+    color: var(--dropdown-text-light) !important;
+}
+
+[data-theme="light"] .dropdown-item:hover {
+    background-color: var(--dropdown-hover-bg-light) !important;
+    color: var(--dropdown-hover-text-light) !important;
+}
+
+[data-theme="light"] .dropdown-divider {
+    border-color: var(--border-color) !important;
+}
+
+/* Стили для наведения в светлой теме */
+[data-theme="light"] .navbar-island .nav-link:hover,
+[data-theme="light"] .navbar-island .btn:hover {
+    color: var(--dropdown-hover-text-light) !important;
+}
+
+/* Убедитесь, что подменю также белые */
+[data-theme="light"] .dropdown-submenu .dropdown-menu.dropdown-sub {
+    background-color: var(--dropdown-bg-light) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Переопределение стилей для мобильных устройств */
+@media (max-width: 992px) {
+    [data-theme="light"] .dropdown-menu {
+        background-color: var(--dropdown-bg-light) !important;
+    }
+}
+
+/* Навигация - четыре острова */
+.navbar-island {
+    background: transparent !important;
     left: 0;
+    padding: 0;
+    position: fixed;
     right: 0;
+    top: 1rem;
     z-index: 1030;
+}
+
+.navbar-island-left,
+.navbar-island-center,
+.navbar-island-right {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--island-shadow);
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    position: fixed;
+    top: 1rem;
+}
+
+.navbar-island-left {
+    height: 52px;
+    left: 305px;
+    width: 120px;
+}
+
+.navbar-island-theme {
+    align-items: center;
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--island-shadow);
+    display: flex;
+    height: 50px;
+    justify-content: center;
+    left: 1rem;
+    padding: 0.5rem;
+    position: fixed;
+    top: 1rem;
+    width: 50px;
+    -webkit-backdrop-filter: blur(40px);
+}
+
+.navbar-island-center {
+    left: 600px;
+    padding: 0.5rem 1rem;
+    transform: translateX(-50%);
+}
+
+.navbar-island-right {
+    padding: 0.5rem 1rem;
+    right: 300px;
+}
+
+/* Добавьте эти стили в раздел навигации */
+.navbar-island .nav-link {
+    color: var(--text-muted) !important; /* Более светлый цвет текста */
+    transition: color 0.3s ease;
+}
+
+.navbar-island .nav-link:hover {
+    color: var(--text-light) !important; /* Еще светлее при наведении */
+}
+
+.navbar-island .dropdown-item {
+    color: var(--text-muted) !important;
+}
+
+.navbar-island .dropdown-item:hover {
+    color: var(--text-light) !important;
+    background-color: transparent;
+}
+
+/* Стили для счетчиков */
+.navbar-island .badge {
+    font-size: 0.6rem;
+    margin-left: 3px;
+    transform: translateY(-2px);
+}
+
+#themeToggle {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.navbar-wrapper {
     background-color: var(--navbar-color) !important;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 1030;
 }
 
 .navbar {
@@ -95,33 +273,56 @@ footer {
     transition: background-color 0.3s ease;
 }
 
-/* Баннер */
+.nav-link,
+.badge {
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.nav-link {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+}
+
 .hero-section {
-    background: url('/images/banner.jpg') center/cover no-repeat;
-    /* остальные стили без изменений */
-    border-radius: 12px;
-    overflow: hidden;
     position: relative;
-    padding: 2rem;
-    margin: 1.5rem 0;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    color: white;
-    min-height: 200px;
     display: flex;
     align-items: center;
+    width: 100%;
+    max-width: 1300px;
+    min-height: 250px;
+    margin: -140px auto 50px;
+    padding: 50px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    color: white;
+    background-image:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.7) 0%, rgba(68, 68, 68, 0.7) 100%),
+        url('/images/banner.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-blend-mode: overlay;
+}
+
+[data-theme="light"] .hero-section {
+    background-image:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.7) 0%, rgba(211, 211, 211, 0.7) 100%),
+        url('/images/banner.jpg');
 }
 
 .hero-content {
+    max-width: 800px;
     position: relative;
     z-index: 2;
-    max-width: 600px;
 }
 
 .hero-title {
     font-size: 2rem;
     font-weight: 800;
-    margin-bottom: 0.75rem;
     line-height: 1.1;
+    margin-bottom: 0.75rem;
 }
 
 .hero-subtitle {
@@ -133,56 +334,71 @@ footer {
 .btn-hero {
     background-color: #5f5d5d;
     border: none;
-    padding: 0.6rem 1.8rem;
-    font-weight: 600;
     border-radius: 50px;
-    transition: all 0.3s ease;
     color: white;
+    font-weight: 600;
+    padding: 0.6rem 1.8rem;
+    transition: all 0.3s ease;
 }
 
 /* Карточки */
 .card {
     background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     color: var(--card-text);
-    border-color: var(--border-color);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    height: 100%;
     display: flex;
     flex-direction: column;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.card-title,
-.card-text {
-    color: var(--card-text) !important;
+    margin-bottom: 1.5rem;
+    min-height: 400px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    width: 100%;
 }
 
 .card-img-top {
-    width: 100%;
     height: auto;
     object-fit: cover;
+    width: 100%;
+}
+
+.card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 1.5rem;
+    padding-bottom: 1rem; /* Только нижний отступ */
+
+}
+
+.card-title {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.card-text {
+    flex-grow: 1;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
 }
 
 .price-section {
     margin-top: auto;
-    padding-top: 1rem;
+    padding-top: 0.5rem;
+}
+
+.badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
 }
 
 .badge-discount {
-    position: absolute;
-    top: 10px;
-    right: 10px;
     font-size: 0.9rem;
+    position: absolute;
+    right: 10px;
+    top: 10px;
 }
 
 /* Текст */
@@ -200,8 +416,8 @@ footer {
 .form-select,
 .size-select {
     background-color: var(--input-bg);
-    color: var(--input-text);
     border-color: var(--input-border);
+    color: var(--input-text);
 }
 
 .form-control:focus,
@@ -213,29 +429,29 @@ footer {
 /* Таблицы */
 .table {
     --bs-table-bg: var(--card-bg);
-    --bs-table-color: var(--text-color);
     --bs-table-border-color: var(--border-color);
-    --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
-    --bs-table-striped-color: var(--text-color);
+    --bs-table-color: var(--text-color);
     --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
     --bs-table-hover-color: var(--text-color);
+    --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
+    --bs-table-striped-color: var(--text-color);
     color: var(--text-color);
 }
 
 [data-theme="dark"] .table {
-    --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
     --bs-table-hover-bg: rgba(255, 255, 255, 0.075);
+    --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
 }
 
 /* Кнопки */
 .btn-outline-dark {
-    color: var(--text-color);
     border-color: var(--border-color);
+    color: var(--text-color);
 }
 
 [data-theme="dark"] .btn-outline-dark {
-    color: var(--text-light);
     border-color: var(--text-light);
+    color: var(--text-light);
 }
 
 .btn-outline-dark:hover {
@@ -246,53 +462,9 @@ footer {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Админ-панель */
-.admin-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.upload-area {
-    border: 2px dashed var(--border-color);
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.upload-area:hover {
-    border-color: var(--primary-color);
-    background-color: rgba(13, 110, 253, 0.05);
-}
-
-.image-preview {
-    max-width: 200px;
-    max-height: 200px;
-    display: block;
-    margin: 10px auto;
-}
-
-.action-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.quantity-control {
-    display: flex;
-    align-items: center;
-}
-
-.receipt-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+/* Хлебные крошки */
+.breadcrumb {
+    font-size: 0.75rem;
 }
 
 /* Стили для корзины */
@@ -301,78 +473,64 @@ footer {
 }
 
 .cart-item-image {
-    width: 80px;
     height: auto;
     object-fit: cover;
+    width: 80px;
 }
 
 .quantity-control {
-    display: flex;
     align-items: center;
+    display: flex;
 }
 
 .quantity-btn {
-    width: 32px;
-    height: 32px;
-    background: var(--quantity-btn-bg, #f8f9fa);
-    border: 1px solid var(--quantity-btn-border, #dee2e6);
-    display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
+    background: var(--quantity-btn-bg);
+    border: 1px solid var(--quantity-btn-border);
     color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    height: 32px;
+    justify-content: center;
+    width: 32px;
 }
 
 .quantity-btn:hover {
-    background-color: var(--quantity-btn-hover, #e9ecef);
+    background-color: var(--quantity-btn-hover);
 }
 
 .quantity-input {
-    width: 50px;
-    height: 32px;
-    text-align: center;
-    border: 1px solid var(--quantity-input-border, #dee2e6);
+    background-color: var(--quantity-input-bg);
     border-left: none;
     border-right: none;
-    background-color: var(--quantity-input-bg, transparent);
+    border: 1px solid var(--quantity-input-border);
     color: var(--text-color);
-}
-
-/* Стили для темной темы */
-[data-theme="dark"] {
-    --quantity-btn-bg: #2d2d2d;
-    --quantity-btn-border: #444;
-    --quantity-btn-hover: #3d3d3d;
-    --quantity-input-border: #444;
-    --quantity-input-bg: #2d2d2d;
-}
-
-[data-theme="dark"] .cart-table {
-    --bs-table-bg: #2d2d2d;
-    --bs-table-color: #fff;
-    --bs-table-border-color: #444;
+    height: 32px;
+    text-align: center;
+    width: 50px;
 }
 
 [data-theme="dark"] .img-thumbnail {
     background-color: #2d2d2d;
     border-color: #444;
 }
-/* Стили админ-панели */
+
 .admin-container {
-    padding-top: 20px;
-    padding-bottom: 40px;
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 20px 20px 40px 20px;
 }
 
 .admin-stat-card {
     background-color: var(--card-bg);
-    border-radius: 8px;
     border: 1px solid var(--border-color);
+    border-radius: 8px;
     transition: transform 0.3s ease;
 }
 
 .admin-stat-card:hover {
-    transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
 }
 
 .admin-stat-card .card-stat {
@@ -383,8 +541,8 @@ footer {
 
 .admin-stat-link {
     color: var(--primary-color);
-    text-decoration: none;
     font-weight: 500;
+    text-decoration: none;
 }
 
 .admin-stat-link:hover {
@@ -403,10 +561,10 @@ footer {
 }
 
 .admin-product-image {
-    width: 50px;
+    border-radius: 4px;
     height: 50px;
     object-fit: cover;
-    border-radius: 4px;
+    width: 50px;
 }
 
 .admin-actions {
@@ -419,29 +577,29 @@ footer {
 }
 
 .admin-action-btn {
-    display: flex;
     align-items: center;
+    display: flex;
     gap: 8px;
 }
 
 .upload-area {
+    background-color: var(--input-bg);
     border: 2px dashed var(--border-color);
     border-radius: 8px;
+    cursor: pointer;
     padding: 2rem;
     text-align: center;
-    cursor: pointer;
     transition: all 0.3s;
-    background-color: var(--input-bg);
 }
 
 .upload-area-dragover {
-    border-color: var(--primary-color);
     background-color: rgba(13, 110, 253, 0.05);
+    border-color: var(--primary-color);
 }
 
 .upload-icon {
-    font-size: 2rem;
     color: var(--text-muted);
+    font-size: 2rem;
 }
 
 .upload-text {
@@ -450,11 +608,11 @@ footer {
 }
 
 .image-preview {
-    max-width: 100%;
-    max-height: 300px;
-    object-fit: contain;
     border-radius: 4px;
     margin-top: 1rem;
+    max-height: 300px;
+    max-width: 100%;
+    object-fit: contain;
 }
 
 .admin-submit-btn {
@@ -462,25 +620,212 @@ footer {
 }
 
 .admin-submit-btn:hover {
-    transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
 
-.hero-section {
-    padding-top: 60px; /* Вместо margin-top */
+.action-container {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1.5rem;
 }
 
-main {
-    margin-top: 20px;
+.receipt-container {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 20px;
+}
+
+/* Контейнер для карточек товаров */
+.products-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 0 1rem;
+    margin: 0 auto;
+    max-width: 1300px;
+}
+
+/* Стили для текста и ссылок в навбаре */
+.navbar-island .nav-link,
+.navbar-island .btn {
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .navbar-island .nav-link,
+[data-theme="dark"] .navbar-island .btn {
+    color: #6c757d;
+}
+
+.navbar-island .nav-link:hover,
+.navbar-island .btn:hover {
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .navbar-island .nav-link:hover,
+[data-theme="dark"] .navbar-island .btn:hover {
+    color: #adb5bd;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+    .navbar-island-left {
+        left: 250px;
+    }
+    .navbar-island-center {
+        left: 50%;
+    }
+    .navbar-island-right {
+        right: 250px;
+    }
+}
+
+@media (max-width: 992px) {
+    .navbar-island-left {
+        left: 200px;
+        width: 100px;
+    }
+    .navbar-island-center {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .navbar-island-right {
+        right: 200px;
+    }
+    main {
+        margin-top: 8rem;
+    }
 }
 
 @media (max-width: 768px) {
-    .admin-container {
-        padding-top: 10px;
+    body {
+        padding-top: 120px;
     }
     
-    .admin-product-image {
-        width: 40px;
-        height: 40px;
+    .navbar-island {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        padding: 0.5rem;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: var(--navbar-color);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .navbar-island-left,
+    .navbar-island-center,
+    .navbar-island-right,
+    .navbar-island-theme {
+        position: static;
+        width: auto;
+        margin: 0;
+        transform: none !important;
+    }
+    
+    .navbar-island-theme {
+        order: -1;
+        margin-right: auto;
+    }
+    
+    .hero-section {
+        margin-top: -80px;
+        padding: 2rem 1rem;
+        min-height: 200px;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .products-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 0 0.5rem;
+    }
+    
+    .card {
+        min-height: 350px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .admin-container {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-island {
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem;
+    }
+    
+    .navbar-island-theme {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+    
+    .hero-section {
+        margin-top: -60px;
+        min-height: 180px;
+    }
+    
+    .hero-title {
+        font-size: 1.3rem;
+    }
+    
+    .products-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        min-height: auto;
+    }
+    
+    main {
+        margin-top: 6rem;
+    }
+}
+
+/* Оптимизированные стили без удаления старых */
+.navbar-wrapper {
+    background-color: var(--navbar-color) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1030;
+}
+
+.navbar {
+    background-color: var(--navbar-color) !important;
+}
+
+/* Улучшенные переходы для мобильных устройств */
+@media (hover: none) {
+    .card:hover {
+        transform: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .admin-stat-card:hover {
+        transform: none;
+        box-shadow: none;
     }
 }

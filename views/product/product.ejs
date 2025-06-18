@@ -112,20 +112,20 @@
         </nav>
         <div class="row">
             <div class="col-md-6">
-                <img src="/images/<%= product.image || 'default.jpg' %>" class="img-fluid rounded product-image" alt="<%= product.name %>">
+                <img src="/images/<%= product.image || 'default.jpg' %>" class="img-fluid rounded product-image" alt="<%= product.name %>" style="transform: scale(0.8);">
+
             </div>
-            <div class="col-md-6">
-                <h2 class="mb-3"><%= product.name %></h2>
-                <div class="price-container mb-3">
+            <div class="col-md-6" style="margin-top: 50px;">
+                <h2 class="mb-3" style="font-size: 20px;"><%= product.name %></h2>
+                <div class="price-container mb-3" style="font-size: 0.8em;">
                     <span class="fw-bold fs-4"><%= Number(product.price).toFixed(2) %> ₽</span>
                     <% if (product.old_price) { %>
                         <span class="text-muted text-decoration-line-through ms-2 fs-5"><%= Number(product.old_price).toFixed(2) %> ₽</span>
                         <span class="badge bg-danger ms-2">Скидка <%= ((1 - product.price / product.old_price) * 100).toFixed(0) %>%</span>
                     <% } %>
                 </div>
-                
                 <div class="mb-4">
-                    <p class="lead"><%= product.description %></p>
+                    <p class="lead" style="font-size: 16px;"><%= product.description %></p>
                 </div>
 
                 <div class="product-details mb-4">

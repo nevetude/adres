@@ -49,14 +49,14 @@
                             <% if (order.status === 'completed') { %>bg-success<% } %>
                             <% if (order.status === 'cancelled') { %>bg-danger<% } %>">
                             <%= {
-                                'pending': 'Ожидает',
+                                'pending': 'В доставке',
                                 'processing': 'В обработке',
                                 'completed': 'Завершен',
                                 'cancelled': 'Отменен'
                             }[order.status] || order.status %>
                         </span>
                     </p>
-                    <p><strong>Сумма:</strong> <%= order.total.toFixed(2) %> ₽</p>
+                    <p><strong>Сумма:</strong> <%= Number(order.total).toFixed(2) %> ₽</p>
                 </div>
             </div>
 
@@ -65,7 +65,14 @@
                     <h4>Информация о клиенте</h4>
                     <p><strong>ФИО:</strong> <%= order.last_name %> <%= order.first_name %> <%= order.middle_name || '' %></p>
                     <p><strong>Телефон:</strong> <%= order.phone %></p>
-                    <p><strong>Адрес:</strong> <%= order.address %></p>
+                    <p><strong>Адрес:</strong> 
+                        <%= order.postal_code %>, 
+                        <%= order.region %>, 
+                        <%= order.city %>, 
+                        <%= order.street %>, 
+                        д. <%= order.building_number %>
+                        <% if (order.apartment_number) { %>, кв. <%= order.apartment_number %><% } %>
+                    </p>
                     <% if (order.comment) { %>
                         <p><strong>Комментарий:</strong> <%= order.comment %></p>
                     <% } %>
@@ -124,7 +131,7 @@
                         <% }); %>
                         <tr>
                             <td colspan="4" class="text-end"><strong>Итого:</strong></td>
-                            <td><strong><%= order.total.toFixed(2) %> ₽</strong></td>
+                            <td><strong><%= Number(order.total).toFixed(2) %> ₽</strong></td>
                         </tr>
                     </tbody>
                 </table>

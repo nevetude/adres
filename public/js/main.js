@@ -14,10 +14,10 @@
           html.style.backgroundColor = theme === 'dark' ? '#121212' : '#ffffff';
           
           if (theme === 'dark') {
-              themeToggle.innerHTML = '<i class="bi bi-sun-fill"></i> Светлая тема';
+              themeToggle.innerHTML = '<i class="bi bi-sun-fill"></i>';
               document.querySelector('.navbar').classList.add('navbar-dark', 'bg-dark');
           } else {
-              themeToggle.innerHTML = '<i class="bi bi-moon-fill"></i> Темная тема';
+              themeToggle.innerHTML = '<i class="bi bi-moon-fill"></i>';
               document.querySelector('.navbar').classList.add('navbar-dark', 'bg-dark');
           }
       }

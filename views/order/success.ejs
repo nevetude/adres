@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="/styles.css">
     <style>
         .receipt-container {
-            max-width: 800px;
+            max-width: 700px;
             margin: 0 auto;
             padding: 20px;
             border: 1px solid var(--border-color);
@@ -63,6 +63,15 @@
         [data-theme="dark"] .breadcrumb-item + .breadcrumb-item::before {
             color: #adb5bd;
         }
+
+        /* Стили для таблицы */
+        .table-responsive {
+            margin-bottom: 1rem;
+        }
+
+        .table tfoot tr th {
+            border-top: 2px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
@@ -82,19 +91,32 @@
         <div class="receipt-container">
             <div class="text-center mb-4">
                 <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
-                <h1 class="mt-3">Заказ успешно оформлен!</h1>
+                <h4 class="mt-3">Заказ успешно оформлен!</h4>
                 <p class="lead">Номер вашего заказа: <strong>#<%= order.id %></strong></p>
             </div>
 
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <h5>Информация о заказе</h5>
+                    <h6>Информация о заказе</h6>
                     <p><strong>Дата:</strong> <%= new Date(order.created_at).toLocaleString('ru-RU') %></p>
-                    <p><strong>Статус:</strong> <span class="badge bg-info">В обработке</span></p>
-                    <p><strong>Итого:</strong> <%= order.total.toFixed(2) %> ₽</p>
+                        <p><strong>Статус:</strong> 
+                        <span class="badge 
+                            <% if (order.status === 'pending') { %>bg-info<% } %>
+                            <% if (order.status === 'processing') { %>bg-warning text-dark<% } %>
+                            <% if (order.status === 'completed') { %>bg-success<% } %>
+                            <% if (order.status === 'cancelled') { %>bg-danger<% } %>">
+                            <%= {
+                                'pending': 'В доставке',
+                                'processing': 'В обработке',
+                                'completed': 'Завершен',
+                                'cancelled': 'Отменен'
+                            }[order.status] || order.status %>
+                        </span>
+                    </p>
+                    <p><strong>Итого:</strong> <%= typeof order.total === 'number' ? order.total.toFixed(2) : '0.00' %> ₽</p>
                 </div>
                 <div class="col-md-6">
-                    <h5>Данные покупателя</h5>
+                    <h6>Данные покупателя</h6>
                     <p>
                         <strong>ФИО:</strong> 
                         <%= order.last_name %> <%= order.first_name %> 
@@ -102,11 +124,16 @@
                     </p>
                     <p><strong>Телефон:</strong> <%= order.phone %></p>
                     <p><strong>Email:</strong> <%= order.email %></p>
-                    <p><strong>Адрес:</strong> Москва, ул. Московская 44, кв. 44</p>
+                    <p><strong>Адрес:</strong> 
+                        <%= order.city %>, 
+                        <%= order.street %>, 
+                        <%= order.building_number %>
+                        <%= order.apartment_number ? ', кв. ' + order.apartment_number : '' %>
+                    </p>
                 </div>
             </div>
 
-            <h5 class="mt-4">Состав заказа</h5>
+            <h5 class="mb-3">Состав заказа</h5>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -126,22 +153,24 @@
                                              alt="<%= item.product_name %>" 
                                              class="img-thumbnail me-3" 
                                              style="width: 50px; height: 50px; object-fit: cover;">
-                                        <%= item.product_name %>
-                                        <% if (item.size) { %>
-                                            <span class="text-muted">(<%= item.size %>)</span>
-                                        <% } %>
+                                        <div>
+                                            <%= item.product_name %>
+                                            <% if (item.size) { %>
+                                                <div class="text-muted small">Размер: <%= item.size %></div>
+                                            <% } %>
+                                        </div>
                                     </div>
                                 </td>
-                                <td><%= item.price.toFixed(2) %> ₽</td>
+                                <td><%= typeof item.price === 'number' ? item.price.toFixed(2) : '0.00' %> ₽</td>
                                 <td><%= item.quantity %></td>
-                                <td><%= (item.price * item.quantity).toFixed(2) %> ₽</td>
+                                <td><%= (typeof item.price === 'number' ? (item.price * item.quantity).toFixed(2) : '0.00') %> ₽</td>
                             </tr>
                         <% }); %>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th colspan="3" class="text-end">Итого:</th>
-                            <th><%= order.total.toFixed(2) %> ₽</th>
+                            <th><%= typeof order.total === 'number' ? order.total.toFixed(2) : '0.00' %> ₽</th>
                         </tr>
                     </tfoot>
                 </table>
@@ -151,9 +180,8 @@
                 <a href="/products" class="btn btn-dark">
                     <i class="bi bi-arrow-left"></i> Вернуться к покупкам
                 </a>
-                <a href="/receipts/receipt_<%= order.id %>.pdf" 
-                   class="btn btn-dark download-btn" 
-                   download="Чек_заказа_<%= order.id %>.pdf">
+                <a href="/cart/order/receipt/<%= order.id %>" 
+                class="btn btn-dark download-btn">
                     <i class="bi bi-download"></i> Скачать чек
                 </a>
             </div>

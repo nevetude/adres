@@ -3,7 +3,7 @@
 <head>
     <%- include('../partials/head', { title: 'Управление заказами' }) %>
     <style>
-                /* Новые стили для поля поиска */
+        /* Новые стили для поля поиска */
         .search-form .form-control {
             color: var(--text-color);
             background-color: var(--bg-color);
@@ -66,6 +66,14 @@
             background-color: #343a40;
             color: white;
         }
+
+        /* Стили для адреса */
+        .address-cell {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +104,7 @@
                             <th>Дата</th>
                             <th>Клиент</th>
                             <th>Телефон</th>
+                            <th>Адрес</th>
                             <th>Сумма</th>
                             <th>Статус</th>
                         </tr>
@@ -109,9 +118,12 @@
                                     </a>
                                 </td>
                                 <td><%= new Date(order.created_at).toLocaleDateString('ru-RU') %></td>
-                                <td><%= order.first_name %></td>
+                                <td><%= order.first_name %> <%= order.last_name %></td>
                                 <td><%= order.phone %></td>
-                                <td><%= order.total.toFixed(2) %> ₽</td>
+                                <td class="address-cell" title="<%= order.postal_code %>, <%= order.region %>, <%= order.city %>, <%= order.street %>, д. <%= order.building_number %><% if (order.apartment_number) { %>, кв. <%= order.apartment_number %><% } %>">
+                                    <%= order.city %>, <%= order.street %>, д. <%= order.building_number %>
+                                </td>
+                                <td><%= Number(order.total).toFixed(2) %> ₽</td>
                                 <td>
                                     <span class="order-status
                                         <% if (order.status === 'pending') { %>status-pending<% } %>
@@ -119,7 +131,7 @@
                                         <% if (order.status === 'completed') { %>status-completed<% } %>
                                         <% if (order.status === 'cancelled') { %>status-cancelled<% } %>">
                                         <%= {
-                                            'pending': 'Ожидает',
+                                            'pending': 'В доставке',
                                             'processing': 'В обработке',
                                             'completed': 'Завершен',
                                             'cancelled': 'Отменен'
