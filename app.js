@@ -94,9 +94,9 @@ const initializeDatabase = async () => {
                 await runQuery(table);
             }
 
-            // Добавление тестовых данных (обновленный список из appl.js)
+            // Добавление тестовых данных
             const initialProducts = [
-                // Мужская коллекция (из папки man)
+                // Мужская коллекция
                 ['Футболка Mono Vibe', 'Мужская футболка Mono Vibe', 1999, 2499, 'Футболки', 'Мужское', 'man/Футболка Mono Vibe.jpg', 10],
                 ['Худи Collapse', 'Мужское худи Collapse', 3999, 4499, 'Худи', 'Мужское', 'man/Худи Collapse.jpg', 8],
                 ['Рубашка Clean Frame', 'Мужская рубашка Clean Frame', 2999, 3499, 'Рубашки', 'Мужское', 'man/Рубашка Clean Frame.jpg', 7],
@@ -105,7 +105,7 @@ const initializeDatabase = async () => {
                 ['Джинсы Static Wash', 'Мужские джинсы Static Washing', 4999, 5499, 'Джинсы', 'Мужское', 'man/Джинсы Static Wash.jpg', 6],
                 ['Брюки Line Step', 'Мужские брюки Line Step', 3499, 3999, 'Брюки', 'Мужское', 'man/Брюки Line Step.jpg', 5],
                 
-                // Женская коллекция (из папки woman)
+                // Женская коллекция 
                 ['Футболка White Static', 'Женская футболка White Static', 1999, 2499, 'Футболки', 'Женское', 'woman/Футболка White Static.jpg', 12],
                 ['Худи Noise Layer', 'Женское худи Noise Layer', 3999, 4499, 'Худи', 'Женское', 'woman/Худи Noise Layer.jpg', 9],
                 ['Рубашка Void Collar', 'Женская рубашка Void Collar', 2999, 3499, 'Рубашки', 'Женское', 'woman/Рубашка Void Collar.jpg', 6],
@@ -168,7 +168,7 @@ app.use(session({
         maxAge: 7 * 24 * 60 * 60 * 1000,
         sameSite: isProduction ? 'none' : 'lax',
         path: '/',
-        domain: isProduction ? 'adres-i9tk.onrender.com' : undefined // Ваш домен Render.com
+        domain: isProduction ? 'adres-i9tk.onrender.com' : undefined // Домен
     },
     name: 'app.sid'
 }));
@@ -190,7 +190,7 @@ app.set('views', [
     path.join(__dirname, 'views/partials')
 ]);
 
-// Добавляем хелпер для форматирования цены (из appl.js)
+// Добавляем хелпер для форматирования цены
 app.locals.formatPrice = (price) => {
     return Number(price).toFixed(2);
 };
@@ -224,7 +224,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/admin', require('./routes/admin'));
 app.use('/cart', require('./routes/cart'));
 
-// Обработка ошибок
+// Обработка 404 и ошибок
 app.use((req, res) => {
     res.status(404).render('error', { 
         message: 'Страница не найдена',
@@ -232,7 +232,6 @@ app.use((req, res) => {
     });
 });
 
-// Обновленная обработка ошибок (из appl.js)
 app.use((err, req, res, next) => {
     console.error('Error:', err.stack);
     
@@ -262,7 +261,7 @@ const startServer = async () => {
             console.log(`Server running on port ${PORT}`);
             console.log(`Database URL: ${process.env.DATABASE_URL}`);
             console.log(`Session secure: ${isProduction}`);
-            console.log(`Admin credentials: admin@adres.com / admin`); // Добавлено из appl.js
+            console.log(`Admin credentials: admin@adres.com / admin`); 
         });
     } catch (err) {
         console.error('Failed to start server:', err);

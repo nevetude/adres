@@ -8,7 +8,7 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const fs = require('fs');
 const pgSession = require('connect-pg-simple')(session);
-const { pool, runQuery } = require('./db'); // Импортируем и pool, и runQuery
+const { pool, runQuery } = require('./db');
 const app = express();
 
 // Настройка загрузки файлов
@@ -18,7 +18,7 @@ if (!fs.existsSync(receiptsDir)) {
     fs.mkdirSync(receiptsDir, { recursive: true });
 }
 
-// Инициализация структуры базы данных (остается такой же как в оригинале)
+// Инициализация структуры базы данных
 const initializeDatabase = async () => {
     try {
         // Проверяем соединение с БД
@@ -96,7 +96,7 @@ const initializeDatabase = async () => {
 
             // Добавление тестовых данных
             const initialProducts = [
-                // Мужская коллекция (из папки man)
+                // Мужская коллекция 
                 ['Футболка Mono Vibe', 'Мужская футболка Mono Vibe', 1999, 2499, 'Футболки', 'Мужское', 'man/Футболка Mono Vibe.jpg', 10],
                 ['Худи Collapse', 'Мужское худи Collapse', 3999, 4499, 'Худи', 'Мужское', 'man/Худи Collapse.jpg', 8],
                 ['Рубашка Clean Frame', 'Мужская рубашка Clean Frame', 2999, 3499, 'Рубашки', 'Мужское', 'man/Рубашка Clean Frame.jpg', 7],
@@ -105,7 +105,7 @@ const initializeDatabase = async () => {
                 ['Джинсы Static Wash', 'Мужские джинсы Static Washing', 4999, 5499, 'Джинсы', 'Мужское', 'man/Джинсы Static Wash.jpg', 6],
                 ['Брюки Line Step', 'Мужские брюки Line Step', 3499, 3999, 'Брюки', 'Мужское', 'man/Брюки Line Step.jpg', 5],
                 
-                // Женская коллекция (из папки woman)
+                // Женская коллекция
                 ['Футболка White Static', 'Женская футболка White Static', 1999, 2499, 'Футболки', 'Женское', 'woman/Футболка White Static.jpg', 12],
                 ['Худи Noise Layer', 'Женское худи Noise Layer', 3999, 4499, 'Худи', 'Женское', 'woman/Худи Noise Layer.jpg', 9],
                 ['Рубашка Void Collar', 'Женская рубашка Void Collar', 2999, 3499, 'Рубашки', 'Женское', 'woman/Рубашка Void Collar.jpg', 6],
@@ -222,7 +222,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/admin', require('./routes/admin'));
 app.use('/cart', require('./routes/cart'));
 
-// Обработка 404 и ошибок (остается такой же как в оригинале)
+// Обработка 404 и ошибок
 app.use((req, res) => {
     res.status(404).render('error', { 
         message: 'Страница не найдена',

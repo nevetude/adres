@@ -4,11 +4,11 @@
         <div class="navbar-island-left">
             <% if (user && user.role === 'admin') { %>
                 <span class="navbar-brand">
-                    <img src="/images/2friday13.png" alt="DOOMSHOP Logo" width="80" height="40" class="d-inline-block align-top rounded">
+                    <img src="/images/misc/adres_logo.png" alt="DOOMSHOP Logo" width="80" height="40" class="d-inline-block align-top rounded">
                 </span>
             <% } else { %>
                 <a class="navbar-brand" href="/">
-                    <img src="/images/2friday13.png" alt="DOOMSHOP Logo" width="80" height="40" class="d-inline-block align-top rounded">
+                    <img src="/images/misc/adres_logo.png" alt="DOOMSHOP Logo" width="80" height="40" class="d-inline-block align-top rounded">
                 </a>
             <% } %>
         </div>
@@ -150,7 +150,6 @@
 </nav>
 
 <style>
-    /* Общие стили для текста в навбаре */
     .navbar,
     .navbar .nav-link,
     .navbar .dropdown-item,
@@ -158,13 +157,11 @@
         font-size: 12px !important;
     }
 
-    /* Стиль для неактивного логотипа */
     .navbar-island-left span.navbar-brand {
         cursor: default;
         opacity: 0.7;
     }
 
-    /* Остальные стили остаются без изменений */
     .dropdown-menu {
         transition: all 0.3s ease;
         opacity: 0;

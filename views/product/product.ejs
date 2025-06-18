@@ -3,7 +3,6 @@
 <head>
     <%- include('partials/head', { title: product.name }) %>
     <style>
-        /* Стили для хлебных крошек */
         .breadcrumb {
             padding: 0.75rem 1rem;
             background-color: transparent;
@@ -44,7 +43,6 @@
             color: #adb5bd; 
         }
 
-        /* Стили для изображения товара */
         .product-image {
             width: 100%;
             height: auto;
@@ -55,7 +53,6 @@
             display: block;
         }
 
-        /* Стили для кнопки добавления в корзину */
         .add-to-cart-btn {
             transition: all 0.3s ease;
         }
@@ -89,11 +86,11 @@
         }
 
         .add-to-cart-btn {
-            height: 38px; /* Фиксированная высота */
-            min-width: 100px; /* Минимальная ширина */
-            padding: 0 12px; /* Горизонтальные отступы */
-            font-size: 16px; /* Размер текста */
-            line-height: 1; /* Межстрочный интервал */
+            height: 38px;
+            min-width: 100px; 
+            padding: 0 12px; 
+            font-size: 16px;
+            line-height: 1; 
         }
     </style>
 </head>
@@ -278,14 +275,11 @@
                         }
 
                         if (data.success) {
-                            // Успешное добавление - анимация
                             this.innerHTML = '<i class="bi bi-check-circle"></i> Добавлено';
                             this.classList.add('added');
                             
-                            // Обновляем счетчик в навигации
                             updateCartCounter(data.cart);
-                            
-                            // Возвращаем исходное состояние через 2 секунды
+
                             setTimeout(() => {
                                 this.innerHTML = originalText;
                                 this.classList.remove('added');

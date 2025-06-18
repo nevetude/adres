@@ -125,7 +125,7 @@
         }
 
         .bank-card-cvv-input {
-            color: #333333; /* Темно-серый цвет */
+            color: #333333; 
             background: white;
             border: none;
             border-radius: 3px;
@@ -135,7 +135,6 @@
             font-family: monospace;
         }
 
-        /* Стили для таблицы заказа */
         .order-table {
             width: 100%;
             margin-top: 40px;
@@ -171,13 +170,12 @@
             font-size: 1.1em;
         }
 
-        /* Обновленные стили для кнопки подтверждения (уменьшены в половину) */
         .confirm-payment-btn {
             display: block;
             margin: 40px auto 20px;
-            padding: 8px 25px; /* Уменьшено в половину (было 12px 40px) */
-            font-size: 14px; /* Уменьшено в половину (было 18px) */
-            background-color: #333; /* Темно-серый цвет */
+            padding: 8px 25px; 
+            font-size: 14px; 
+            background-color: #333; 
             color: white;
             border: none;
             border-radius: 8px;
@@ -187,7 +185,7 @@
         }
 
         .confirm-payment-btn:hover {
-            background-color: #555; /* Более светлый серый при наведении */
+            background-color: #555; 
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
@@ -200,7 +198,6 @@
             box-shadow: none;
         }
 
-        /* Стили для заголовка */
         .payment-title {
             text-align: center;
             margin-bottom: 10px;
@@ -308,13 +305,13 @@
         function getBankColor(number) {
             const cleaned = number.replace(/\D/g, ''); // Удаляем все нецифровые символы
             if (cleaned.startsWith('4')) {
-                // Сбербанк (Visa)
+                // Сбербанк
                 return {front: '#0093DD', back: '#0078aa'}; // синий
             } else if (cleaned.startsWith('5')) {
-                // ВТБ (MasterCard)
+                // ВТБ
                 return {front: '#FF0000', back: '#cc0000'}; // красный
             } else if (cleaned.startsWith('2')) {
-                // Альфабанк (пример)
+                // Альфабанк
                 return {front: '#00A86B', back: '#008755'}; // зеленый
             } else {
                 return {front: '#a8a8a8', back: '#707070'}; // дефолтный цвет
@@ -377,14 +374,14 @@
             confirmBtn.disabled = !checkForm();
         });
         
-// Обработчик кнопки подтверждения
+    // Обработчик кнопки подтверждения
     confirmBtn.addEventListener('click', async () => {
         try {
             // Показываем индикатор загрузки
             confirmBtn.disabled = true;
             confirmBtn.textContent = 'Обработка...';
 
-            const orderId = '<%= order.id %>'; // Получаем ID заказа из шаблона
+            const orderId = '<%= order.id %>';
             
             // Отправляем запрос на подтверждение оплаты
             const response = await fetch(`/cart/order/complete/${orderId}`, {
@@ -396,7 +393,6 @@
             });
 
             if (response.ok) {
-                // Перенаправление на страницу успешного заказа
                 window.location.href = `/cart/order/success/${orderId}`;
             } else {
                 const errorData = await response.json();

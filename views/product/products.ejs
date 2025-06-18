@@ -3,7 +3,6 @@
 <head>
     <%- include('partials/head', { title: 'Все товары' }) %>
     <style>
-        /* Фиксированная навигационная панель */
         .navbar-wrapper {
             position: fixed;
             top: 0;
@@ -14,9 +13,8 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Отступ для основного контента */
         body {
-            padding-top: 56px; /* Высота навигационной панели */
+            padding-top: 56px; 
         }
 
         .product-card {
@@ -48,8 +46,6 @@
     <div class="navbar-wrapper">
         <%- include('partials/navbar') %>
     </div>
-
-    <!-- Увеличиваем верхний отступ для контейнера -->
     <div class="container mt-5 pt-4">
         <h4 class="mb-4">Все товары</h4>
 

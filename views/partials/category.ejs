@@ -3,7 +3,6 @@
 <head>
     <%- include('partials/head', { title: `${gender} ${category}` }) %>
     <style>
-                /* Стили для хлебных крошек */
         .breadcrumb {
             padding: 0.75rem 1rem;
             background-color: transparent;
@@ -11,7 +10,7 @@
         }
         
         .breadcrumb-item a {
-            color: #495057; /* Темно-серый цвет для светлой темы */
+            color: #495057; 
             text-decoration: none;
             transition: color 0.2s;
         }
@@ -25,7 +24,7 @@
         }
         
         [data-theme="dark"] .breadcrumb-item a {
-            color: #e9ecef; /* Белый цвет для темной темы */
+            color: #e9ecef; 
         }
         
         [data-theme="dark"] .breadcrumb-item a:hover {
@@ -37,11 +36,11 @@
         }
         
         .breadcrumb-item + .breadcrumb-item::before {
-            color: #6c757d; /* Цвет разделителя для светлой темы */
+            color: #6c757d; 
         }
         
         [data-theme="dark"] .breadcrumb-item + .breadcrumb-item::before {
-            color: #adb5bd; /* Цвет разделителя для темной темы */
+            color: #adb5bd;
         }
     </style>
     <link rel="stylesheet" href="/styles.css">
