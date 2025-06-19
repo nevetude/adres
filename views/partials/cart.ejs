@@ -3,61 +3,193 @@
 <head>
     <%- include('partials/head', { title: 'Корзина' }) %>
     <link rel="stylesheet" href="/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .quantity-control .input-group {
-            flex-wrap: nowrap;
+        /* Общие стили */
+        .cart-container {
+            padding: 15px;
         }
-        .quantity-control .quantity-display {
-            background-color: white;
-            border-left: none;
-            border-right: none;
-            pointer-events: none;
+        
+        .cart-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Стили для пустой корзины */
+        .empty-cart-alert {
+            margin: 20px 0;
+            padding: 15px;
+        }
+        
+        /* Стили для таблицы на десктопе */
+        .cart-table.desktop {
+            width: 100%;
+            display: table;
+        }
+        
+        /* Стили для мобильного вида */
+        .cart-table.mobile {
+            display: none;
+            width: 100%;
+        }
+        
+        .cart-item-mobile {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            position: relative;
+        }
+        
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+        
+        .cart-item-info {
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        
+        .cart-item-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .cart-item-price {
+            font-weight: 500;
+        }
+        
+        .cart-item-total {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .remove-item-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+        
+        /* Стили для управления количеством */
+        .quantity-control {
+            margin: 10px 0;
+        }
+        
+        .quantity-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-btn {
+            width: 30px;
             height: 30px;
-            width: 40px;
+            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0;
-        }
-        .quantity-control .quantity-btn {
-            width: 35px;
-            height: 30px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .quantity-control .btn-outline-secondary {
-            border-color: #ced4da;
-        }
-        .quantity-control .btn-outline-secondary:hover {
+            border: 1px solid #ced4da;
             background-color: #f8f9fa;
         }
         
-        /* Стили для темной темы */
-        .dark .quantity-display {
-            background-color: #343a40 !important;
-            color: white !important;
-            border-color: #495057 !important;
+        .quantity-display {
+            width: 40px;
+            height: 30px;
+            text-align: center;
+            border-top: 1px solid #ced4da;
+            border-bottom: 1px solid #ced4da;
+            border-left: none;
+            border-right: none;
+            margin: 0 -1px;
         }
-        .dark .quantity-btn {
-            border-color: #495057 !important;
-            color: #adb5bd !important;
+        
+        /* Кнопки действий */
+        .cart-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .dark .quantity-btn:hover {
-            background-color: #495057 !important;
-            color: white !important;
+        
+        .cart-actions .btn {
+            width: 100%;
+            padding: 10px;
         }
-
-        /* Анимация удаления товара */
+        
+        /* Анимация удаления */
         .cart-item-remove {
             transition: all 0.3s ease;
-            transform: scale(1);
-            opacity: 1;
         }
+        
         .cart-item-remove.removing {
-            transform: scale(0.9);
             opacity: 0;
+            transform: scale(0.9);
+        }
+        
+        /* Темная тема */
+        .dark .quantity-btn {
+            background-color: #495057;
+            border-color: #6c757d;
+            color: #f8f9fa;
+        }
+        
+        .dark .quantity-display {
+            background-color: #343a40;
+            color: #f8f9fa;
+            border-color: #6c757d;
+        }
+        
+        .dark .cart-item-mobile {
+            border-color: #495057;
+            background-color: #343a40;
+        }
+        
+        .dark .cart-item-total {
+            color: #f8f9fa;
+        }
+        
+        /* Адаптация под разные экраны */
+        @media (max-width: 768px) {
+            .cart-table.desktop {
+                display: none;
+            }
+            
+            .cart-table.mobile {
+                display: block;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .cart-table.desktop {
+                display: table;
+            }
+            
+            .cart-table.mobile {
+                display: none;
+            }
+            
+            .cart-actions {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .cart-actions .btn {
+                width: auto;
+            }
         }
     </style>
 </head>
@@ -66,16 +198,18 @@
         <%- include('partials/navbar') %>
     </div>
 
-    <div class="container mt-5 pt-4" id="cart-container">
+    <div class="container cart-container" id="cart-container">
         <% if (cart.length === 0) { %>
-            <h4 class="mb-4">Корзина</h4>
-            <div class="alert alert-info">
+            <h4 class="cart-title">Корзина</h4>
+            <div class="alert alert-info empty-cart-alert">
                 Ваша корзина пуста. <a href="/products" class="alert-link">Перейти к покупкам</a>
             </div>
         <% } else { %>
-            <h4 class="mb-4">Корзина</h4>
+            <h4 class="cart-title">Корзина</h4>
+            
+            <!-- Десктопная версия таблицы -->
             <div class="table-responsive">
-                <table class="table cart-table">
+                <table class="table cart-table desktop">
                     <thead>
                         <tr>
                             <th>Товар</th>
@@ -86,14 +220,14 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody id="cart-items">
+                    <tbody id="cart-items-desktop">
                         <% cart.forEach(item => { %>
                             <tr class="cart-item-remove" data-id="<%= item.id %>" data-size="<%= item.size %>">
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <img src="/images/<%= item.image %>" alt="<%= item.name %>" class="img-thumbnail me-3 cart-item-image">
                                         <div>
-                                            <h5 class="mb-0"><%= item.name %></h5>
+                                            <h5 class="mb-0 cart-item-name"><%= item.name %></h5>
                                             <a href="/product/<%= item.id %>" class="text-muted">Подробнее</a>
                                         </div>
                                     </div>
@@ -106,14 +240,14 @@
                                         <input type="hidden" name="size" value="<%= item.size %>">
                                         <input type="hidden" name="quantity" value="<%= item.quantity %>">
                                         
-                                        <div class="input-group quantity-group" style="width: 110px;">
-                                            <button type="button" class="quantity-btn minus btn btn-outline-secondary" data-delta="-1">
+                                        <div class="input-group quantity-group">
+                                            <button type="button" class="quantity-btn minus" data-delta="-1">
                                                 <i class="bi bi-dash"></i>
                                             </button>
-                                            <div class="quantity-display form-control text-center border-secondary bg-white text-dark dark:bg-dark dark:text-white">
+                                            <div class="quantity-display">
                                                 <%= item.quantity %>
                                             </div>
-                                            <button type="button" class="quantity-btn plus btn btn-outline-secondary" data-delta="1">
+                                            <button type="button" class="quantity-btn plus" data-delta="1">
                                                 <i class="bi bi-plus"></i>
                                             </button>
                                         </div>
@@ -123,7 +257,7 @@
                                 </td>
                                 <td class="total-cell"><%= (item.price * item.quantity).toFixed(2) %> ₽</td>
                                 <td>
-                                    <button type="button" class="btn btn-danger btn-sm remove-item-btn">
+                                    <button type="button" class="btn btn-link text-danger p-0 remove-item-btn">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
@@ -132,8 +266,55 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Мобильная версия списка товаров -->
+            <div class="cart-table mobile" id="cart-items-mobile">
+                <% cart.forEach(item => { %>
+                    <div class="cart-item-remove cart-item-mobile" data-id="<%= item.id %>" data-size="<%= item.size %>">
+                        <button type="button" class="remove-item-btn">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        
+                        <div class="d-flex">
+                            <img src="/images/<%= item.image %>" alt="<%= item.name %>" class="cart-item-image">
+                            <div class="cart-item-info">
+                                <div class="cart-item-name"><%= item.name %></div>
+                                <div>Размер: <%= item.size %></div>
+                                <div class="cart-item-price"><%= Number(item.price).toFixed(2) %> ₽</div>
+                                
+                                <form action="/cart/update" method="POST" class="quantity-control" id="quantityFormMobile-<%= item.id %>-<%= item.size %>">
+                                    <input type="hidden" name="id" value="<%= item.id %>">
+                                    <input type="hidden" name="size" value="<%= item.size %>">
+                                    <input type="hidden" name="quantity" value="<%= item.quantity %>">
+                                    
+                                    <div class="d-flex align-items-center">
+                                        <span style="margin-right: 10px;">Кол-во:</span>
+                                        <div class="quantity-group">
+                                            <button type="button" class="quantity-btn minus" data-delta="-1">
+                                                <i class="bi bi-dash"></i>
+                                            </button>
+                                            <div class="quantity-display">
+                                                <%= item.quantity %>
+                                            </div>
+                                            <button type="button" class="quantity-btn plus" data-delta="1">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" style="display:none">Submit</button>
+                                </form>
+                                
+                                <div class="cart-item-details">
+                                    <div class="cart-item-total">Итого: <%= (item.price * item.quantity).toFixed(2) %> ₽</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
 
-            <div class="d-flex justify-content-between mt-4" id="cart-actions">
+            <div class="cart-actions" id="cart-actions">
                 <a href="/products" class="btn btn-dark">Продолжить покупки</a>
                 <a href="/cart/checkout" class="btn btn-dark">Оформить заказ</a>
             </div>
@@ -141,6 +322,7 @@
     </div>
 
     <%- include('partials/footer') %>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

@@ -3,28 +3,29 @@
 <head>
     <%- include('../partials/head', { title: 'Оплата заказа' }) %>
     <link rel="stylesheet" href="/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .payment-container {
             max-width: 800px;
-            margin: 30px auto;
-            padding: 20px;
+            margin: 20px auto;
+            padding: 15px;
         }
 
-        /* Изолированные стили для карты (не влияют на другие элементы) */
+        /* Адаптивные стили для карты */
         .bank-card-wrapper {
             position: relative;
-            width: 350px;
-            height: 250px;
-            margin: 30px auto;
-            margin-left: 140px;
+            width: 100%;
+            max-width: 350px;
+            height: 220px;
+            margin: 20px auto;
         }
 
         .bank-card {
-            width: 350px;
-            height: 220px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            padding: 20px;
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 15px;
             box-sizing: border-box;
             background-color: #a8a8a8;
             position: absolute;
@@ -39,8 +40,8 @@
         }
 
         .bank-card-back {
-            top: 40px;
-            left: 100px;
+            top: 30px;
+            left: 20%;
             background-color: #707070;
             display: flex;
             flex-direction: column;
@@ -48,43 +49,46 @@
 
         /* Стили для передней стороны карты */
         .bank-card-number-group {
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .bank-card-number-label {
-            font-size: 12px;
+            font-size: 11px;
             color: rgba(0, 0, 0, 0.6);
             margin-bottom: 5px;
         }
 
         .bank-card-number-input {
             color: #333333;
-            width: 220px;
-            font-size: 18px;
+            width: 100%;
+            max-width: 220px;
+            font-size: 16px;
             letter-spacing: 1px;
             background: rgba(255, 255, 255, 0.7);
             border: none;
             border-radius: 5px;
-            padding: 8px 12px;
+            padding: 8px 10px;
         }
 
         .bank-card-details {
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
         }
 
         .bank-card-holder-group {
-            width: 180px;
+            width: 60%;
+            min-width: 150px;
         }
 
         .bank-card-expiry-group {
-            width: 70px;
-            margin-right: 40px;
+            width: 30%;
+            min-width: 80px;
         }
 
         .bank-card-input-label {
-            font-size: 12px;
+            font-size: 11px;
             color: rgba(0, 0, 0, 0.6);
             margin-bottom: 5px;
         }
@@ -94,8 +98,8 @@
             background: rgba(255, 255, 255, 0.7);
             border: none;
             border-radius: 5px;
-            padding: 8px 12px;
-            font-size: 16px;
+            padding: 8px 10px;
+            font-size: 14px;
             width: 100%;
         }
 
@@ -105,10 +109,10 @@
 
         /* Стили для задней стороны карты */
         .bank-card-magnetic-stripe {
-            height: 40px;
+            height: 30px;
             background-color: #333;
-            margin-top: 20px;
-            width: 330px;
+            margin-top: 15px;
+            width: 100%;
         }
 
         .bank-card-cvv-group {
@@ -119,7 +123,7 @@
         }
 
         .bank-card-cvv-label {
-            font-size: 12px;
+            font-size: 11px;
             color: rgba(0, 0, 0, 0.6);
             margin-bottom: 5px;
         }
@@ -129,20 +133,21 @@
             background: white;
             border: none;
             border-radius: 3px;
-            padding: 5px 10px;
-            width: 60px;
+            padding: 5px 8px;
+            width: 50px;
             text-align: right;
             font-family: monospace;
         }
 
         .order-table {
             width: 100%;
-            margin-top: 40px;
+            margin-top: 30px;
             border-collapse: collapse;
+            font-size: 14px;
         }
 
         .order-table th, .order-table td {
-            padding: 12px 15px;
+            padding: 10px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
@@ -153,11 +158,11 @@
         }
 
         .product-image {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             object-fit: cover;
             border-radius: 4px;
-            margin-right: 15px;
+            margin-right: 10px;
         }
 
         .product-info {
@@ -167,14 +172,15 @@
 
         .total-row {
             font-weight: bold;
-            font-size: 1.1em;
         }
 
         .confirm-payment-btn {
             display: block;
-            margin: 40px auto 20px;
-            padding: 8px 25px; 
-            font-size: 14px; 
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto 20px;
+            padding: 12px 25px; 
+            font-size: 16px; 
             background-color: #333; 
             color: white;
             border: none;
@@ -186,40 +192,73 @@
 
         .confirm-payment-btn:hover {
             background-color: #555; 
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .confirm-payment-btn:disabled {
             background-color: #999;
             cursor: not-allowed;
             opacity: 0.7;
-            transform: none;
-            box-shadow: none;
         }
 
         .payment-title {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
         }
 
-        /* Новые стили для заголовка и итоговой суммы */
         .order-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+            flex-wrap: wrap;
         }
 
         .order-header h6 {
             margin: 0;
+            font-size: 16px;
         }
 
         .order-total {
             font-weight: bold;
-            font-size: 1.1em;
+            font-size: 16px;
         }
-        
+
+        /* Адаптация для мобильных */
+        @media (max-width: 576px) {
+            .payment-container {
+                padding: 10px;
+            }
+            
+            .bank-card {
+                height: 180px;
+                padding: 12px;
+            }
+            
+            .bank-card-number-input {
+                font-size: 14px;
+                padding: 6px 8px;
+            }
+            
+            .bank-card-input {
+                font-size: 13px;
+                padding: 6px 8px;
+            }
+            
+            .order-table {
+                font-size: 13px;
+            }
+            
+            .product-image {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .confirm-payment-btn {
+                padding: 10px;
+                font-size: 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -309,36 +348,11 @@
     <%- include('../partials/footer') %>
     
     <script>
-        const cardFront = document.getElementById('bank-card-front');
-        const cardBack = document.querySelector('.bank-card-back');
         const cardNumberInput = document.getElementById('bank-card-number');
         const cardHolderInput = document.getElementById('bank-card-holder');
         const cardExpiryInput = document.getElementById('bank-card-expiry');
         const cardCvvInput = document.getElementById('bank-card-cvv');
         const confirmBtn = document.getElementById('confirm-payment-btn');
-        
-        // Элементы для отображения ошибок
-        const cardNumberError = document.getElementById('card-number-error');
-        const holderError = document.getElementById('holder-error');
-        const expiryError = document.getElementById('expiry-error');
-        const cvvError = document.getElementById('cvv-error');
-        
-        // Функция для определения банка по первым цифрам
-        function getBankColor(number) {
-            const cleaned = number.replace(/\D/g, ''); // Удаляем все нецифровые символы
-            if (cleaned.startsWith('4')) {
-                // Сбербанк
-                return {front: '#0093DD', back: '#0078aa'}; // синий
-            } else if (cleaned.startsWith('5')) {
-                // ВТБ
-                return {front: '#FF0000', back: '#cc0000'}; // красный
-            } else if (cleaned.startsWith('2')) {
-                // Альфабанк
-                return {front: '#00A86B', back: '#008755'}; // зеленый
-            } else {
-                return {front: '#a8a8a8', back: '#707070'}; // дефолтный цвет
-            }
-        }
         
         // Проверка валидности срока действия карты (минимум 06/25)
         function isExpiryValid(expiry) {
@@ -355,7 +369,7 @@
             
             // Получаем текущую дату
             const currentDate = new Date();
-            const currentYear = currentDate.getFullYear() % 100; // Получаем последние 2 цифры года
+            const currentYear = currentDate.getFullYear() % 100;
             const currentMonth = currentDate.getMonth() + 1;
             
             // Проверяем, что срок не меньше 06/25
@@ -379,12 +393,6 @@
             const cardCvv = cardCvvInput.value;
             const cardCvvValid = cardCvv.length === 3 && /^\d+$/.test(cardCvv);
             
-            // Управление отображением ошибок
-            cardNumberInput.parentElement.classList.toggle('has-error', !cardNumberValid);
-            cardHolderInput.parentElement.classList.toggle('has-error', !cardHolderValid);
-            cardExpiryInput.parentElement.classList.toggle('has-error', !cardExpiryValid);
-            cardCvvInput.parentElement.classList.toggle('has-error', !cardCvvValid);
-            
             return cardNumberValid && cardHolderValid && cardExpiryValid && cardCvvValid;
         }
         
@@ -400,13 +408,6 @@
             }
             
             e.target.value = formatted;
-            
-            // Меняем цвет карты в зависимости от первых цифр
-            const colors = getBankColor(value);
-            cardFront.style.backgroundColor = colors.front;
-            cardBack.style.backgroundColor = colors.back;
-            
-            // Активируем кнопку если все поля заполнены
             confirmBtn.disabled = !checkForm();
         });
         
@@ -439,13 +440,11 @@
         // Обработчик кнопки подтверждения
         confirmBtn.addEventListener('click', async () => {
             try {
-                // Показываем индикатор загрузки
                 confirmBtn.disabled = true;
                 confirmBtn.textContent = 'Обработка...';
 
                 const orderId = '<%= order.id %>';
                 
-                // Отправляем запрос на подтверждение оплаты
                 const response = await fetch(`/cart/order/complete/${orderId}`, {
                     method: 'POST',
                     headers: {
