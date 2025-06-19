@@ -95,6 +95,27 @@ footer {
     min-height: 200px;
     position: relative;
     width: 100%;
+    padding: 1.5rem 0;
+}
+[data-theme="dark"] footer {
+    background-color: #212529; /* Темный фон для темной темы */
+    color: #f8f9fa;
+}
+
+/* Гарантируем, что body занимает всю высоту */
+html, body {
+    height: 100%;
+}
+
+/* Дополнительные отступы для мобильных */
+@media (max-width: 767.98px) {
+    main {
+        padding-bottom: 2rem;
+    }
+    
+    footer {
+        padding: 1rem 0;
+    }
 }
 
 /* ======================

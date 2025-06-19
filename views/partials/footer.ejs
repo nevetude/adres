@@ -8,22 +8,22 @@
                 <p class="text-uppercase" style="font-size: 0.6rem;">ТЕЛЕФОН: +7 (000) 000-0000</p>
             </div>
 
-            <!-- Центральная часть с логотипами -->
+            <!-- Центральная часть - только логотип бренда на мобильных -->
             <div class="col-12 col-md-6 order-1 order-md-2 mb-4 mb-md-0">
                 <div class="d-flex flex-column flex-md-row justify-content-center align-items-center" style="gap: 20px;">
-                    <!-- Node.js -->
-                    <div class="d-flex align-items-center">
+                    <!-- Node.js - только на десктопе -->
+                    <div class="d-none d-md-flex align-items-center">
                         <span class="text-uppercase me-2" style="font-size: 0.6rem;">MADE WITH</span>
                         <img src="/images/misc/nodejs.svg" alt="Node.js" style="height: 30px;">
                     </div>
 
-                    <!-- 44adres -->
-                    <div class="text-center mx-3">
+                    <!-- Логотип бренда - всегда виден -->
+                    <div class="text-center mx-3 py-3 py-md-0">
                         <img src="/images/misc/adres_logo.png" alt="44adres" style="height: 60px; margin-bottom: 5px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
                     </div>
 
-                    <!-- Render -->
-                    <div class="d-flex align-items-center">
+                    <!-- Render - только на десктопе -->
+                    <div class="d-none d-md-flex align-items-center">
                         <span class="text-uppercase me-2" style="font-size: 0.6rem;">HOSTED BY</span>
                         <img src="/images/misc/render.png" alt="Render" style="height: 12px; position: relative; top: -3px;">
                     </div>
@@ -50,3 +50,36 @@
         </div>
     </div>
 </footer>
+
+<style>
+    /* Увеличенная высота футера для мобильных */
+    @media (max-width: 767.98px) {
+        footer {
+            padding-top: 2.5rem !important;
+            padding-bottom: 2.5rem !important;
+            min-height: 400px; /* Фиксированная минимальная высота */
+        }
+        
+        .footer-bg {
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        /* Дополнительные отступы для логотипа */
+        .py-3 {
+            padding-top: 1.5rem !important;
+            padding-bottom: 1.5rem !important;
+        }
+    }
+    
+    /* Общие стили футера */
+    .footer-bg {
+        background-color: #212529; /* Темный фон по умолчанию */
+    }
+    
+    [data-theme="light"] .footer-bg {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+</style>

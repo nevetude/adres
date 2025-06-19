@@ -3,6 +3,7 @@
 <head>
     <%- include('partials/head', { title: product.name }) %>
     <style>
+        
         .breadcrumb {
             padding: 0.75rem 1rem;
             background-color: transparent;
@@ -92,6 +93,13 @@
             font-size: 16px;
             line-height: 1; 
         }
+        @media (max-width: 767.98px) {
+        .container.mt-4 {
+            padding-bottom: 3rem; /* добавит отступ снизу контейнера */
+            margin-bottom: 2rem; /* дополнительный отступ */
+        }
+        
+    }
     </style>
 </head>
 <body>
